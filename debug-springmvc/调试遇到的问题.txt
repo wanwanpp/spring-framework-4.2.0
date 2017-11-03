@@ -1,0 +1,19 @@
+1.在spring源码上创建了springmvc项目，无法获取spring的class文件。
+    解决办法：将那些对spring依赖的class   put into /WEB-INF/classes下。
+2.启动时报错"http://www.springframework.org/schema/context/spring-context.xsd"找不到，发现debug-springmvc编译后的
+out/artifacts/debug_springmvc_war_exploded/WEB-INF/classes/META-INF/spring.handlers只有springmvc的NamespaceHandler，但是配置中
+还需要用其他的NamespaceHandler，又编译后只能有一个spring.handlers，因此先编译的spring.handler的内容复制了不去，后面的都没有复制到classes下。
+    解决办法：将其他spring组件中spring.handler中指定的Namespacehandler，都copy到的一个被加载的spring.handler里面去。编译后就能成功找到
+    所需的NamespaceHandler处理类了。
+3.找不到jsp文件。发现是web.xml中DispatcherServlet对应的url-pattern配置的是：/*。
+    解决办法：将url-pattern改为：/。
+    网上说/*会直接让DispatcherServlet来拦截所有请求，DispatcherServlet的处理请求都是我们自己实现的，但是这里访问的jsp我们没有实现，
+    它们由web容器提供的如JspServlet,DefaultServlet，就无法访问。
+    而对于/，它是在找不到servlet处理请求的情况下才来找DispatcherServlet。所以可以成功使用Web容器提供的servlet。先就找到了web容器提供的servlet。
+
+    <url-pattern>/*</url-pattern>
+    在/*上一个servlet覆盖所有其他的servlet，包括由servletcontainer提供诸如默认的servlet和JSP的servlet所有servlet。不管你发起什么请求，它都会在
+    这个servlet中结束。这是servlet的一个错误的URL模式。
+
+    <url-pattern>/</url-pattern>
+    在/不覆盖任何其他的servlet。它只替换servletcontainer的内置默认servlet，用于所有不匹配任何其他注册servlet的请求。

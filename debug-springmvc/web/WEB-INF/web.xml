@@ -11,17 +11,16 @@
             <param-name>contextConfigLocation</param-name>
             <param-value>/WEB-INF/springmvc-debug.xml</param-value>
         </init-param>
-        <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>debug</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <!--<context-param>-->
-    <!--<param-name>contestConfigLocation</param-name>-->
-    <!--<param-value>/WEB-INF/applicationContext.xml</param-value>-->
-    <!--</context-param>-->
+    <context-param>
+        <param-name>contestConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
