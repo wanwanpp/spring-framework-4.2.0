@@ -19,7 +19,10 @@ public class TestFoo {
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
         reader.loadBeanDefinitions(resource);
 
-        Foo bean = (Foo) factory.getBean("foo");
-        bean.execute();
+//        String[] beanDefinitionNames = factory.getBeanDefinitionNames();
+//        Arrays.stream(beanDefinitionNames).forEach(System.out::println);
+//
+//        Foo bean = (Foo) factory.getBean("foo");
+//        bean.execute();
     }
 }

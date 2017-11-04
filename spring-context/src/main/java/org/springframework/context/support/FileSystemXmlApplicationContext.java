@@ -135,8 +135,10 @@ public class FileSystemXmlApplicationContext extends AbstractXmlApplicationConte
 			throws BeansException {
 
 		super(parent);
+
 		setConfigLocations(configLocations);
 		if (refresh) {
+			//启动BeanDefinition的载入过程。
 			refresh();
 		}
 	}
