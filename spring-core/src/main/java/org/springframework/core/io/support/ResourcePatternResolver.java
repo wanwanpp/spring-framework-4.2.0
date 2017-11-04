@@ -51,6 +51,7 @@ import org.springframework.core.io.ResourceLoader;
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
  */
+//根据位置模式串匹配资源位置，并返回所有的资源。
 public interface ResourcePatternResolver extends ResourceLoader {
 
 	/**

@@ -35,6 +35,7 @@ import java.util.Locale;
  * @see org.springframework.context.support.ResourceBundleMessageSource
  * @see org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
+//解析消息的接口，支持参数化和国际化的消息。
 public interface MessageSource {
 
 	/**

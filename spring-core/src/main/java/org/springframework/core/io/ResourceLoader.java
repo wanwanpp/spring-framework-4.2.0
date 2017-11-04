@@ -38,6 +38,7 @@ import org.springframework.util.ResourceUtils;
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
  */
+//加载资源的策略接口，支持文件系统加载，classpath加载，相对路径加载。
 public interface ResourceLoader {
 
 	/** Pseudo URL prefix for loading from the class path: "classpath:" */

@@ -28,6 +28,7 @@ package org.springframework.context;
  * @see org.springframework.context.ApplicationEvent
  * @see org.springframework.context.event.EventPublicationInterceptor
  */
+//封装事件发布功能。
 public interface ApplicationEventPublisher {
 
 	/**
