@@ -30,6 +30,7 @@ package org.springframework.beans.factory.config;
  * @see org.springframework.beans.factory.support.DefaultSingletonBeanRegistry
  * @see org.springframework.beans.factory.support.AbstractBeanFactory
  */
+//单例Bean注册器。
 public interface SingletonBeanRegistry {
 
 	/**
