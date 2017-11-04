@@ -16,11 +16,11 @@
 
 package org.springframework.beans.factory;
 
-import java.lang.annotation.Annotation;
-import java.util.Map;
-
 import org.springframework.beans.BeansException;
 import org.springframework.core.ResolvableType;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * Extension of the {@link BeanFactory} interface to be implemented by bean factories
@@ -54,6 +54,7 @@ import org.springframework.core.ResolvableType;
  * @see HierarchicalBeanFactory
  * @see BeanFactoryUtils
  */
+//提供了一些对bean信息的获取方式。
 public interface ListableBeanFactory extends BeanFactory {
 
 	/**
