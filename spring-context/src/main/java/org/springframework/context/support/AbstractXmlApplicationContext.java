@@ -16,14 +16,14 @@
 
 package org.springframework.context.support;
 
-import java.io.IOException;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
+
+import java.io.IOException;
 
 /**
  * Convenient base class for {@link org.springframework.context.ApplicationContext}
@@ -79,17 +79,23 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
 		// Create a new XmlBeanDefinitionReader for the given BeanFactory.
+		//将beanFactory作为BeanDefinitionRegistry，reader读取到的BeanDefinition信息会注册到beanFactory中。
+
 		XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
 
 		// Configure the bean definition reader with this context's
 		// resource loading environment.
+		//上面XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);这一步中，
+		//会调用AbstractBeanDefinitionReader(BeanDefinitionRegistry registry)这个构造函数，里面也会对environment和ResourceLoader进行设置。
 		beanDefinitionReader.setEnvironment(this.getEnvironment());
-		beanDefinitionReader.setResourceLoader(this);
-		beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));
+		beanDefinitionReader.setResourceLoader(this);                        //this指的是AbstractXMLApplicationContext，其顶级接口是ResourceLoader。
+		beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));            //设置xml中dtd的解析器。
 
 		// Allow a subclass to provide custom initialization of the reader,
 		// then proceed with actually loading the bean definitions.
 		initBeanDefinitionReader(beanDefinitionReader);
+
+		//将BeanDefinition注册到beanFactory中。
 		loadBeanDefinitions(beanDefinitionReader);
 	}
 

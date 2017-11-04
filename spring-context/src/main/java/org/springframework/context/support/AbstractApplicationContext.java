@@ -506,6 +506,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			//创建了新的beanFactory。
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
@@ -566,18 +567,20 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * active flag as well as performing any initialization of property sources.
 	 */
 	protected void prepareRefresh() {
-		this.startupDate = System.currentTimeMillis();
-		this.active.set(true);
+		this.startupDate = System.currentTimeMillis();            //设置启动时间
+		this.active.set(true);                                                  //设置活跃状态
 
 		if (logger.isInfoEnabled()) {
 			logger.info("Refreshing " + this);
 		}
 
 		// Initialize any placeholder property sources in the context environment
+		//
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		//确认所有被标记为required属性的properties被解析。
 		getEnvironment().validateRequiredProperties();
 
 		// Allow for the collection of early ApplicationEvents,
@@ -601,7 +604,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #getBeanFactory()
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+		//完成了beanFactory中BeanDefinition的注册。
 		refreshBeanFactory();
+		//refreshBeanFactory();中创建了beanFactory，并将其设置在了AbstractRefreshableApplicationContext的beanFactory属性中。
+		//这里获取AbstractRefreshableApplicationContext的beanFactory属性
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Bean factory for " + getDisplayName() + ": " + beanFactory);

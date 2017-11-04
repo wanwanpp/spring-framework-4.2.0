@@ -71,7 +71,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	private DefaultListableBeanFactory beanFactory;
 
 	/** Synchronization monitor for the internal BeanFactory */
-	private final Object beanFactoryMonitor = new Object();
+	private final Object beanFactoryMonitor = new Object();      //就起到synchronized锁的对象的作用。
 
 
 	/**
@@ -120,15 +120,17 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	protected final void refreshBeanFactory() throws BeansException {
 		if (hasBeanFactory()) {
 			destroyBeans();
-			closeBeanFactory();
+			closeBeanFactory();          //将this.beanFactory属性设置为null。
 		}
 		try {
+			//new DefaultListableBeanFactory(getInternalParentBeanFactory())。
+			// 创建一个DefaultListableBeanFactory对象，并根据已有的parentBeanFactory设置它的parentbeanFactory。
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
-			customizeBeanFactory(beanFactory);
+			customizeBeanFactory(beanFactory);                           //设置beanFactory是否允许循环依赖，BeanDefinition覆写。
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
-				this.beanFactory = beanFactory;
+				this.beanFactory = beanFactory;                            //设置this.beanFactory属性。
 			}
 		}
 		catch (IOException ex) {
