@@ -30,6 +30,7 @@ import org.springframework.beans.BeansException;
  * @author Juergen Hoeller
  * @since 3.0
  */
+//解析一个表达式的值，spring-EL表达式，比如配置文件或者@Value("#{...}")等使用
 public interface BeanExpressionResolver {
 
 	/**
