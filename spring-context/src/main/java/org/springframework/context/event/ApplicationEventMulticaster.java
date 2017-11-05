@@ -32,6 +32,7 @@ import org.springframework.core.ResolvableType;
  * @author Juergen Hoeller
  * @author Stephane Nicoll
  */
+//发布事件。
 public interface ApplicationEventMulticaster {
 
 	/**
