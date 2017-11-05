@@ -16,11 +16,11 @@
 
 package org.springframework.core;
 
+import org.springframework.util.Assert;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.springframework.util.Assert;
 
 /**
  * Support class for {@link AttributeAccessor AttributeAccessors}, providing
@@ -33,6 +33,7 @@ import org.springframework.util.Assert;
  * @since 2.0
  */
 @SuppressWarnings("serial")
+//实现了AttributeAccessor中定义的对对象元数据的操作
 public abstract class AttributeAccessorSupport implements AttributeAccessor, Serializable {
 
 	/** Map with String keys and Object values */

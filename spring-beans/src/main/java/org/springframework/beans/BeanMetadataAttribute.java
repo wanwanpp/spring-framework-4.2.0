@@ -26,6 +26,8 @@ import org.springframework.util.ObjectUtils;
  * @author Juergen Hoeller
  * @since 2.5
  */
+//BeanDefinition属性描述的载体。
+//除了属性的key-value，还记录了定义源
 public class BeanMetadataAttribute implements BeanMetadataElement {
 
 	private final String name;

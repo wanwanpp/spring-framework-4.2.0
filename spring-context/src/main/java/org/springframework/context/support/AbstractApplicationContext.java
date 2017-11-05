@@ -588,6 +588,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
                 registerListeners();
 
                 // Instantiate all remaining (non-lazy-init) singletons.
+                //预实例化，实例化所有非延迟加载的singletons。
                 finishBeanFactoryInitialization(beanFactory);
 
                 // Last step: publish corresponding event.
@@ -884,6 +885,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      */
     protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
         // Initialize conversion service for this context.
+        //为BeanFactory设置类型转换器
         if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
                 beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
             beanFactory.setConversionService(
@@ -903,6 +905,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
         beanFactory.freezeConfiguration();
 
         // Instantiate all remaining (non-lazy-init) singletons.
+        //预实例化非延迟加载单例。
         beanFactory.preInstantiateSingletons();
     }
 

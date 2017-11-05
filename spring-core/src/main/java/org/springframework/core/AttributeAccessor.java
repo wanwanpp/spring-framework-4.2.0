@@ -23,6 +23,7 @@ package org.springframework.core;
  * @author Rob Harrop
  * @since 2.0
  */
+//对任意对象元数据的修改或者获取。
 public interface AttributeAccessor {
 
 	/**

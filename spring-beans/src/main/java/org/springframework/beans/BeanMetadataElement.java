@@ -23,6 +23,7 @@ package org.springframework.beans;
  * @author Juergen Hoeller
  * @since 2.0
  */
+//传输可配置的源对象
 public interface BeanMetadataElement {
 
 	/**

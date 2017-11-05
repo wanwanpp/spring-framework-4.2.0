@@ -24,6 +24,7 @@ package org.springframework.core.convert;
  * @author Phillip Webb
  * @since 3.0
  */
+//类型转换服务,是进入转换系统的入口点。
 public interface ConversionService {
 
 	/**
