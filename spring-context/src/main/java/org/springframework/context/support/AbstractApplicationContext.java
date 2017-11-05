@@ -916,12 +916,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
      */
     protected void finishRefresh() {
         // Initialize lifecycle processor for this context.
+        //为BeanFactory设置LifecycleProcessor的实例。
         initLifecycleProcessor();
 
         // Propagate refresh to lifecycle processor first.
         getLifecycleProcessor().onRefresh();
 
         // Publish the final event.
+        //发布ApplicationContext refreshed事件，通知listener
         publishEvent(new ContextRefreshedEvent(this));
 
         // Participate in LiveBeansView MBean, if active.

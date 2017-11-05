@@ -38,6 +38,7 @@ import org.springframework.beans.BeansException;
  * @see InitializingBean
  * @see org.springframework.context.ApplicationContextAware
  */
+//实现这个接口表示自己想拥有一个BeanFactory。则需要实现 setBeanFactory(BeanFactory beanFactory) 方法。
 public interface BeanFactoryAware extends Aware {
 
 	/**

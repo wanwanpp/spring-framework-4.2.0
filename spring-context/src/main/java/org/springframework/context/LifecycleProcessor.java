@@ -23,6 +23,7 @@ package org.springframework.context;
  * @author Juergen Hoeller
  * @since 3.0
  */
+//策略接口，用于处理应用上下文的Bean生命周期。
 public interface LifecycleProcessor extends Lifecycle {
 
 	/**
