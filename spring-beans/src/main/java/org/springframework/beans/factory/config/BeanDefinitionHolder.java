@@ -110,6 +110,7 @@ public class BeanDefinitionHolder implements BeanMetadataElement {
 	 * @see BeanDefinition#getSource()
 	 */
 	@Override
+	//this.beanDefinition.getSource(),source应该存在BeanMetadataAttributeAccessor中的。
 	public Object getSource() {
 		return this.beanDefinition.getSource();
 	}

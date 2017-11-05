@@ -32,6 +32,7 @@ import java.beans.PropertyEditor;
  * @see BeanWrapper
  * @see org.springframework.validation.DataBinder
  */
+//属性编辑器注册中心。
 public interface PropertyEditorRegistry {
 
 	/**

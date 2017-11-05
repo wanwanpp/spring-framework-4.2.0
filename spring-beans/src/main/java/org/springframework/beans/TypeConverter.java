@@ -16,9 +16,9 @@
 
 package org.springframework.beans;
 
-import java.lang.reflect.Field;
-
 import org.springframework.core.MethodParameter;
+
+import java.lang.reflect.Field;
 
 /**
  * Interface that defines type conversion methods. Typically (but not necessarily)
@@ -33,6 +33,7 @@ import org.springframework.core.MethodParameter;
  * @see SimpleTypeConverter
  * @see BeanWrapperImpl
  */
+//类型转换器。
 public interface TypeConverter {
 
 	/**

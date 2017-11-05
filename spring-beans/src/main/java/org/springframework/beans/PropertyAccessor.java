@@ -16,9 +16,9 @@
 
 package org.springframework.beans;
 
-import java.util.Map;
-
 import org.springframework.core.convert.TypeDescriptor;
+
+import java.util.Map;
 
 /**
  * Common interface for classes that can access named properties
@@ -31,6 +31,7 @@ import org.springframework.core.convert.TypeDescriptor;
  * @see PropertyAccessorFactory#forBeanPropertyAccess
  * @see PropertyAccessorFactory#forDirectFieldAccess
  */
+//对属性的修改或获取。
 public interface PropertyAccessor {
 
 	/**

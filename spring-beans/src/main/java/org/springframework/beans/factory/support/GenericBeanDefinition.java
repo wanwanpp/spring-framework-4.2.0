@@ -36,6 +36,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * @see ChildBeanDefinition
  */
 @SuppressWarnings("serial")
+//没看懂和ChildBeanDefinition有多大区别。
 public class GenericBeanDefinition extends AbstractBeanDefinition {
 
 	private String parentName;

@@ -43,6 +43,7 @@ import org.springframework.util.ObjectUtils;
  * @see RootBeanDefinition
  */
 @SuppressWarnings("serial")
+//定义了parent，实现了BeanDefinition中的setParentName和getParentName方法。
 public class ChildBeanDefinition extends AbstractBeanDefinition {
 
 	private String parentName;

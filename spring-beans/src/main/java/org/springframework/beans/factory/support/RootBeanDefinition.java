@@ -16,16 +16,16 @@
 
 package org.springframework.beans.factory.support;
 
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.util.Assert;
+
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A root bean definition represents the merged bean definition that backs
@@ -46,6 +46,11 @@ import org.springframework.util.Assert;
  * @see ChildBeanDefinition
  */
 @SuppressWarnings("serial")
+//一个RootBeanDefinition定义表明它是一个可合并的bean definition：
+// 即在spring beanFactory运行期间，可以返回一个特定的bean。
+// RootBeanDefinition可以作为一个重要的通用的bean definition 视图。
+
+//没有parentName
 public class RootBeanDefinition extends AbstractBeanDefinition {
 
 	boolean allowCaching = true;

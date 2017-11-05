@@ -30,6 +30,7 @@ import org.springframework.core.convert.ConversionService;
  * @since 2.0
  * @see BeanWrapper
  */
+//封装了PropertyAccessor的配置方法
 public interface ConfigurablePropertyAccessor extends PropertyAccessor, PropertyEditorRegistry, TypeConverter {
 
 	/**
