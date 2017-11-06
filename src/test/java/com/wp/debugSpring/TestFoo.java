@@ -23,7 +23,7 @@ public class TestFoo {
 //        String[] beanDefinitionNames = factory.getBeanDefinitionNames();
 //        Arrays.stream(beanDefinitionNames).forEach(System.out::println);
 //
-        Foo bean = (Foo) factory.getBean("foo");
+        Foo bean = (Foo) factory.getBean("wanwanpp");
         bean.execute();
     }
 }
