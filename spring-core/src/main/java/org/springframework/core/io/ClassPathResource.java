@@ -16,15 +16,15 @@
 
 package org.springframework.core.io;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * {@link Resource} implementation for class path resources.
@@ -160,6 +160,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	public InputStream getInputStream() throws IOException {
 		InputStream is;
 		if (this.clazz != null) {
+			//利用Class的属性classLoader进行加载，此classLoader为加载它的classLoader，若classLoader为null，则使用系统类加载器加载。
 			is = this.clazz.getResourceAsStream(this.path);
 		}
 		else if (this.classLoader != null) {

@@ -14,7 +14,8 @@ public class TestFoo {
 //        Foo bean = (Foo) factory.getBean("foo");
 //        bean.execute();
 
-        ClassPathResource resource = new ClassPathResource("com/wp/debugSpring/testbean.xml");
+        ClassPathResource resource = new ClassPathResource("com\\wp\\debugSpring\\testbean.xml");
+//        ClassPathResource resource = new ClassPathResource("com/wp/debugSpring/testbean.xml");
         DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
         reader.loadBeanDefinitions(resource);
@@ -22,7 +23,7 @@ public class TestFoo {
 //        String[] beanDefinitionNames = factory.getBeanDefinitionNames();
 //        Arrays.stream(beanDefinitionNames).forEach(System.out::println);
 //
-//        Foo bean = (Foo) factory.getBean("foo");
-//        bean.execute();
+        Foo bean = (Foo) factory.getBean("foo");
+        bean.execute();
     }
 }
