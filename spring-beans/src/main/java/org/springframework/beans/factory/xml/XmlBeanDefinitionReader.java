@@ -343,6 +343,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 if (encodedResource.getEncoding() != null) {
                     inputSource.setEncoding(encodedResource.getEncoding());
                 }
+                //返回注册的BeanDefinition的个数。
                 return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
             } finally {
                 inputStream.close();
@@ -351,8 +352,10 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             throw new BeanDefinitionStoreException(
                     "IOException parsing XML document from " + encodedResource.getResource(), ex);
         } finally {
+            //resource使用完后，从currentResources中删掉。
             currentResources.remove(encodedResource);
             if (currentResources.isEmpty()) {
+                //如果没有需要解析的resource了，remove掉resourcesCurrentlyBeingLoaded。
                 this.resourcesCurrentlyBeingLoaded.remove();
             }
         }
@@ -398,8 +401,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
             throws BeanDefinitionStoreException {
         try {
+            //获得Document对象。
             Document doc = doLoadDocument(inputSource, resource);
-            return registerBeanDefinitions(doc, resource);
+            return registerBeanDefinitions(doc, resource);       //返回注册的BeanDefinition的个数。
         } catch (BeanDefinitionStoreException ex) {
             throw ex;
         } catch (SAXParseException ex) {

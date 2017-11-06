@@ -19,8 +19,7 @@ package org.springframework.beans.factory.parsing;
 import org.springframework.core.io.Resource;
 
 /**
- * Simple strategy allowing tools to control how source metadata is attached
- * to the bean definition metadata.
+ * Simple strategy allowing tools to control how source metadata is attached to the bean definition metadata.
  *
  * <p>Configuration parsers <strong>may</strong> provide the ability to attach
  * source metadata during the parse phase. They will offer this metadata in a

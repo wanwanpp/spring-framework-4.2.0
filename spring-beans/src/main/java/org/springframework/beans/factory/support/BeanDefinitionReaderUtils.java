@@ -64,7 +64,7 @@ public class BeanDefinitionReaderUtils {
 			}
 			else {
 				bd.setBeanClassName(className);                                               //设置Bean className。
-			}
+			}                                                                                                     //beanClass和beanClassName都是设置的GenericBeanDefinition的beanClass属性。
 		}
 		return bd;
 	}
@@ -145,12 +145,14 @@ public class BeanDefinitionReaderUtils {
 
 		// Register bean definition under primary name.
 		String beanName = definitionHolder.getBeanName();
+		//将BeanDefinition注册到DefaultListableBeanFactory中的beanDefinitionMap，以beanName为key，BeanDefinition为value。
 		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
 
 		// Register aliases for bean name, if any.
 		String[] aliases = definitionHolder.getAliases();
 		if (aliases != null) {
 			for (String alias : aliases) {
+				//有别名的话注册别名与beanName的映射。
 				registry.registerAlias(beanName, alias);
 			}
 		}

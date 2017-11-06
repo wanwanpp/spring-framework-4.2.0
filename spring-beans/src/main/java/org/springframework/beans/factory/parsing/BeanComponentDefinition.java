@@ -16,18 +16,17 @@
 
 package org.springframework.beans.factory.parsing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanReference;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * ComponentDefinition based on a standard BeanDefinition, exposing the given bean
- * definition as well as inner bean definitions and bean references for the given bean.
+ * ComponentDefinition based on a standard BeanDefinition, exposing the given bean definition as well as inner bean definitions and bean references for the given bean.
  *
  * @author Rob Harrop
  * @author Juergen Hoeller
