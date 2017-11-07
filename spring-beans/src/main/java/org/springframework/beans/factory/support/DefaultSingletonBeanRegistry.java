@@ -32,19 +32,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link org.springframework.beans.factory.config.SingletonBeanRegistry}.
  * Allows for registering singleton instances that should be shared
  * for all callers of the registry, to be obtained via bean name.
- *
+ * <p>
  * <p>Also supports registration of
  * {@link org.springframework.beans.factory.DisposableBean} instances,
  * (which might or might not correspond to registered singletons),
  * to be destroyed on shutdown of the registry. Dependencies between
  * beans can be registered to enforce an appropriate shutdown order.
- *
+ * <p>
  * <p>This class mainly serves as base class for
  * {@link org.springframework.beans.factory.BeanFactory} implementations,
  * factoring out the common management of singleton bean instances. Note that
  * the {@link org.springframework.beans.factory.config.ConfigurableBeanFactory}
  * interface extends the {@link SingletonBeanRegistry} interface.
- *
+ * <p>
  * <p>Note that this class assumes neither a bean definition concept
  * nor a specific creation process for bean instances, in contrast to
  * {@link AbstractBeanFactory} and {@link DefaultListableBeanFactory}
@@ -52,558 +52,610 @@ import java.util.concurrent.ConcurrentHashMap;
  * helper to delegate to.
  *
  * @author Juergen Hoeller
- * @since 2.0
  * @see #registerSingleton
  * @see #registerDisposableBean
  * @see org.springframework.beans.factory.DisposableBean
  * @see org.springframework.beans.factory.config.ConfigurableBeanFactory
+ * @since 2.0
  */
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
-	/**
-	 * Internal marker for a null singleton object:
-	 * used as marker value for concurrent Maps (which don't support null values).
-	 */
-	protected static final Object NULL_OBJECT = new Object();
+    /**
+     * Internal marker for a null singleton object:
+     * used as marker value for concurrent Maps (which don't support null values).
+     */
+    protected static final Object NULL_OBJECT = new Object();
 
 
-	/** Logger available to subclasses */
-	protected final Log logger = LogFactory.getLog(getClass());
+    /**
+     * Logger available to subclasses
+     */
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	/** Cache of singleton objects: bean name --> bean instance */
-	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>(64);
+    //getSingleton(String beanName, boolean allowEarlyReference) 中
+    //spring创建单例bean的时候，存在循环依赖的问题。比如创建bean a的时候发现bean a引用了bean b，
+    // 此时会去创建bean b，但又发现bean b引用了bean c，所以此时会去创建bean c，在创建bean c的过程中发现bean c引用bean a。
+    // 这三个bean就形成了一个环。为了解决循环依赖的问题，spring采取了一种将创建的bean实例提早暴露加入到缓存中，
+    // 一旦下一个bean创建的时候需要依赖上个bean，则直接使用ObjectFactory来获取bean
 
-	/** Cache of singleton factories: bean name --> ObjectFactory */
-	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<String, ObjectFactory<?>>(16);
+    //singletonObjects和earlySingletonObjects的区别主要在于earlySingletonObjects是为了解决循环依赖设置的，
+    // 储存的是提前暴露的bean name –> bean instance，而singletonObjects存储的是完全实例化的bean name –> bean instance。
+    //提前暴露的bean实例是指bean实例创建完成，但是还没有对属性进行注入，即没有注入依赖的对象，因为循环依赖中，依赖的对象还没有，为null，
+    // 循环依赖通过这种方法可以解决
 
-	/** Cache of early singleton objects: bean name --> bean instance */
-	private final Map<String, Object> earlySingletonObjects = new HashMap<String, Object>(16);
+    /**
+     * Cache of singleton objects: bean name --> bean instance
+     */
+    private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>(64);
 
-	/** Set of registered singletons, containing the bean names in registration order */
-	private final Set<String> registeredSingletons = new LinkedHashSet<String>(64);
+    /**
+     * Cache of singleton factories: bean name --> ObjectFactory
+     */
+    private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<String, ObjectFactory<?>>(16);
 
-	/** Names of beans that are currently in creation */
-	private final Set<String> singletonsCurrentlyInCreation =
-			Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>(16));
+    /**
+     * Cache of early singleton objects: bean name --> bean instance
+     */
+    //存储那些提前暴露的，未对属性进行注入的bean，用于处理循环依赖。
+    private final Map<String, Object> earlySingletonObjects = new HashMap<String, Object>(16);
 
-	/** Names of beans currently excluded from in creation checks */
-	private final Set<String> inCreationCheckExclusions =
-			Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>(16));
+    /**
+     * Set of registered singletons, containing the bean names in registration order
+     */
+    private final Set<String> registeredSingletons = new LinkedHashSet<String>(64);
 
-	/** List of suppressed Exceptions, available for associating related causes */
-	private Set<Exception> suppressedExceptions;
+    /**
+     * Names of beans that are currently in creation
+     */
+    //记录正在创建的bean。
+    private final Set<String> singletonsCurrentlyInCreation =
+            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>(16));
 
-	/** Flag that indicates whether we're currently within destroySingletons */
-	private boolean singletonsCurrentlyInDestruction = false;
+    /**
+     * Names of beans currently excluded from in creation checks
+     */
+    private final Set<String> inCreationCheckExclusions =
+            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>(16));
 
-	/** Disposable bean instances: bean name --> disposable instance */
-	private final Map<String, Object> disposableBeans = new LinkedHashMap<String, Object>();
+    /**
+     * List of suppressed Exceptions, available for associating related causes
+     */
+    private Set<Exception> suppressedExceptions;
 
-	/** Map between containing bean names: bean name --> Set of bean names that the bean contains */
-	private final Map<String, Set<String>> containedBeanMap = new ConcurrentHashMap<String, Set<String>>(16);
+    /**
+     * Flag that indicates whether we're currently within destroySingletons
+     */
+    private boolean singletonsCurrentlyInDestruction = false;
 
-	/** Map between dependent bean names: bean name --> Set of dependent bean names */
-	private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<String, Set<String>>(64);
+    /**
+     * Disposable bean instances: bean name --> disposable instance
+     */
+    private final Map<String, Object> disposableBeans = new LinkedHashMap<String, Object>();
 
-	/** Map between depending bean names: bean name --> Set of bean names for the bean's dependencies */
-	private final Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<String, Set<String>>(64);
+    /**
+     * Map between containing bean names: bean name --> Set of bean names that the bean contains
+     */
+    private final Map<String, Set<String>> containedBeanMap = new ConcurrentHashMap<String, Set<String>>(16);
 
+    /**
+     * Map between dependent bean names: bean name --> Set of dependent bean names
+     */
+    private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<String, Set<String>>(64);
 
-	@Override
-	public void registerSingleton(String beanName, Object singletonObject) throws IllegalStateException {
-		Assert.notNull(beanName, "'beanName' must not be null");
-		synchronized (this.singletonObjects) {
-			Object oldObject = this.singletonObjects.get(beanName);
-			if (oldObject != null) {
-				throw new IllegalStateException("Could not register object [" + singletonObject +
-						"] under bean name '" + beanName + "': there is already object [" + oldObject + "] bound");
-			}
-			addSingleton(beanName, singletonObject);
-		}
-	}
-
-	/**
-	 * Add the given singleton object to the singleton cache of this factory.
-	 * <p>To be called for eager registration of singletons.
-	 * @param beanName the name of the bean
-	 * @param singletonObject the singleton object
-	 */
-	protected void addSingleton(String beanName, Object singletonObject) {
-		synchronized (this.singletonObjects) {
-			this.singletonObjects.put(beanName, (singletonObject != null ? singletonObject : NULL_OBJECT));
-			this.singletonFactories.remove(beanName);
-			this.earlySingletonObjects.remove(beanName);
-			this.registeredSingletons.add(beanName);
-		}
-	}
-
-	/**
-	 * Add the given singleton factory for building the specified singleton
-	 * if necessary.
-	 * <p>To be called for eager registration of singletons, e.g. to be able to
-	 * resolve circular references.
-	 * @param beanName the name of the bean
-	 * @param singletonFactory the factory for the singleton object
-	 */
-	protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
-		Assert.notNull(singletonFactory, "Singleton factory must not be null");
-		synchronized (this.singletonObjects) {
-			if (!this.singletonObjects.containsKey(beanName)) {
-				this.singletonFactories.put(beanName, singletonFactory);
-				this.earlySingletonObjects.remove(beanName);
-				this.registeredSingletons.add(beanName);
-			}
-		}
-	}
-
-	@Override
-	public Object getSingleton(String beanName) {
-		return getSingleton(beanName, true);
-	}
-
-	/**
-	 * Return the (raw) singleton object registered under the given name.
-	 * <p>Checks already instantiated singletons and also allows for an early
-	 * reference to a currently created singleton (resolving a circular reference).
-	 * @param beanName the name of the bean to look for
-	 * @param allowEarlyReference whether early references should be created or not
-	 * @return the registered singleton object, or {@code null} if none found
-	 */
-	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
-		//从单例Bean缓冲区中取。
-		Object singletonObject = this.singletonObjects.get(beanName);
-		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
-			synchronized (this.singletonObjects) {
-				singletonObject = this.earlySingletonObjects.get(beanName);
-				if (singletonObject == null && allowEarlyReference) {
-					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
-					if (singletonFactory != null) {
-						singletonObject = singletonFactory.getObject();   //从ObjectFactory中获取实例，可能属性还没有填充完整。
-						this.earlySingletonObjects.put(beanName, singletonObject);
-						this.singletonFactories.remove(beanName);
-					}
-				}
-			}
-		}
-		return (singletonObject != NULL_OBJECT ? singletonObject : null);
-	}
-
-	/**
-	 * Return the (raw) singleton object registered under the given name,
-	 * creating and registering a new one if none registered yet.
-	 * @param beanName the name of the bean
-	 * @param singletonFactory the ObjectFactory to lazily create the singleton
-	 * with, if necessary
-	 * @return the registered singleton object
-	 */
-	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
-		Assert.notNull(beanName, "'beanName' must not be null");
-		synchronized (this.singletonObjects) {
-			Object singletonObject = this.singletonObjects.get(beanName);
-			if (singletonObject == null) {
-				if (this.singletonsCurrentlyInDestruction) {
-					throw new BeanCreationNotAllowedException(beanName,
-							"Singleton bean creation not allowed while the singletons of this factory are in destruction " +
-							"(Do not request a bean from a BeanFactory in a destroy method implementation!)");
-				}
-				if (logger.isDebugEnabled()) {
-					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
-				}
-				beforeSingletonCreation(beanName);
-				boolean newSingleton = false;
-				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
-				if (recordSuppressedExceptions) {
-					this.suppressedExceptions = new LinkedHashSet<Exception>();
-				}
-				try {
-					singletonObject = singletonFactory.getObject();
-					newSingleton = true;
-				}
-				catch (IllegalStateException ex) {
-					// Has the singleton object implicitly appeared in the meantime ->
-					// if yes, proceed with it since the exception indicates that state.
-					singletonObject = this.singletonObjects.get(beanName);
-					if (singletonObject == null) {
-						throw ex;
-					}
-				}
-				catch (BeanCreationException ex) {
-					if (recordSuppressedExceptions) {
-						for (Exception suppressedException : this.suppressedExceptions) {
-							ex.addRelatedCause(suppressedException);
-						}
-					}
-					throw ex;
-				}
-				finally {
-					if (recordSuppressedExceptions) {
-						this.suppressedExceptions = null;
-					}
-					afterSingletonCreation(beanName);
-				}
-				if (newSingleton) {
-					addSingleton(beanName, singletonObject);
-				}
-			}
-			return (singletonObject != NULL_OBJECT ? singletonObject : null);
-		}
-	}
-
-	/**
-	 * Register an Exception that happened to get suppressed during the creation of a
-	 * singleton bean instance, e.g. a temporary circular reference resolution problem.
-	 * @param ex the Exception to register
-	 */
-	protected void onSuppressedException(Exception ex) {
-		synchronized (this.singletonObjects) {
-			if (this.suppressedExceptions != null) {
-				this.suppressedExceptions.add(ex);
-			}
-		}
-	}
-
-	/**
-	 * Remove the bean with the given name from the singleton cache of this factory,
-	 * to be able to clean up eager registration of a singleton if creation failed.
-	 * @param beanName the name of the bean
-	 * @see #getSingletonMutex()
-	 */
-	protected void removeSingleton(String beanName) {
-		synchronized (this.singletonObjects) {
-			this.singletonObjects.remove(beanName);
-			this.singletonFactories.remove(beanName);
-			this.earlySingletonObjects.remove(beanName);
-			this.registeredSingletons.remove(beanName);
-		}
-	}
-
-	@Override
-	public boolean containsSingleton(String beanName) {
-		return this.singletonObjects.containsKey(beanName);
-	}
-
-	@Override
-	public String[] getSingletonNames() {
-		synchronized (this.singletonObjects) {
-			return StringUtils.toStringArray(this.registeredSingletons);
-		}
-	}
-
-	@Override
-	public int getSingletonCount() {
-		synchronized (this.singletonObjects) {
-			return this.registeredSingletons.size();
-		}
-	}
+    /**
+     * Map between depending bean names: bean name --> Set of bean names for the bean's dependencies
+     */
+    private final Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<String, Set<String>>(64);
 
 
-	public void setCurrentlyInCreation(String beanName, boolean inCreation) {
-		Assert.notNull(beanName, "Bean name must not be null");
-		if (!inCreation) {
-			this.inCreationCheckExclusions.add(beanName);
-		}
-		else {
-			this.inCreationCheckExclusions.remove(beanName);
-		}
-	}
+    @Override
+    public void registerSingleton(String beanName, Object singletonObject) throws IllegalStateException {
+        Assert.notNull(beanName, "'beanName' must not be null");
+        synchronized (this.singletonObjects) {
+            Object oldObject = this.singletonObjects.get(beanName);
+            if (oldObject != null) {
+                throw new IllegalStateException("Could not register object [" + singletonObject +
+                        "] under bean name '" + beanName + "': there is already object [" + oldObject + "] bound");
+            }
+            addSingleton(beanName, singletonObject);
+        }
+    }
 
-	public boolean isCurrentlyInCreation(String beanName) {
-		Assert.notNull(beanName, "Bean name must not be null");
-		return (!this.inCreationCheckExclusions.contains(beanName) && isActuallyInCreation(beanName));
-	}
+    /**
+     * Add the given singleton object to the singleton cache of this factory.
+     * <p>To be called for eager registration of singletons.
+     *
+     * @param beanName        the name of the bean
+     * @param singletonObject the singleton object
+     */
+    protected void addSingleton(String beanName, Object singletonObject) {
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.put(beanName, (singletonObject != null ? singletonObject : NULL_OBJECT));
+            this.singletonFactories.remove(beanName);
+            this.earlySingletonObjects.remove(beanName);
+            this.registeredSingletons.add(beanName);
+        }
+    }
 
-	protected boolean isActuallyInCreation(String beanName) {
-		return isSingletonCurrentlyInCreation(beanName);
-	}
+    /**
+     * Add the given singleton factory for building the specified singleton
+     * if necessary.
+     * <p>To be called for eager registration of singletons, e.g. to be able to
+     * resolve circular references.
+     *
+     * @param beanName         the name of the bean
+     * @param singletonFactory the factory for the singleton object
+     */
+    protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
+        Assert.notNull(singletonFactory, "Singleton factory must not be null");
+        synchronized (this.singletonObjects) {
+            if (!this.singletonObjects.containsKey(beanName)) {
+                this.singletonFactories.put(beanName, singletonFactory);
+                this.earlySingletonObjects.remove(beanName);
+                this.registeredSingletons.add(beanName);
+            }
+        }
+    }
 
-	/**
-	 * Return whether the specified singleton bean is currently in creation
-	 * (within the entire factory).
-	 * @param beanName the name of the bean
-	 */
-	public boolean isSingletonCurrentlyInCreation(String beanName) {
-		return this.singletonsCurrentlyInCreation.contains(beanName);
-	}
+    @Override
+    public Object getSingleton(String beanName) {
+        return getSingleton(beanName, true);
+    }
 
-	/**
-	 * Callback before singleton creation.
-	 * <p>The default implementation register the singleton as currently in creation.
-	 * @param beanName the name of the singleton about to be created
-	 * @see #isSingletonCurrentlyInCreation
-	 */
-	protected void beforeSingletonCreation(String beanName) {
-		if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) {
-			throw new BeanCurrentlyInCreationException(beanName);
-		}
-	}
+    /**
+     * Return the (raw) singleton object registered under the given name.
+     * <p>Checks already instantiated singletons and also allows for an early
+     * reference to a currently created singleton (resolving a circular reference).
+     *
+     * @param beanName            the name of the bean to look for
+     * @param allowEarlyReference whether early references should be created or not
+     * @return the registered singleton object, or {@code null} if none found
+     */
+    protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+        //从单例Bean缓冲区中取。
+        Object singletonObject = this.singletonObjects.get(beanName);
+        if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+            synchronized (this.singletonObjects) {
+                singletonObject = this.earlySingletonObjects.get(beanName);
+                if (singletonObject == null && allowEarlyReference) {
+                    ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+                    if (singletonFactory != null) {
+                        singletonObject = singletonFactory.getObject();   //从ObjectFactory中获取实例，可能属性还没有填充完整。
+                        this.earlySingletonObjects.put(beanName, singletonObject);
+                        this.singletonFactories.remove(beanName);
+                    }
+                }
+            }
+        }
+        return (singletonObject != NULL_OBJECT ? singletonObject : null);
+    }
 
-	/**
-	 * Callback after singleton creation.
-	 * <p>The default implementation marks the singleton as not in creation anymore.
-	 * @param beanName the name of the singleton that has been created
-	 * @see #isSingletonCurrentlyInCreation
-	 */
-	protected void afterSingletonCreation(String beanName) {
-		if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.remove(beanName)) {
-			throw new IllegalStateException("Singleton '" + beanName + "' isn't currently in creation");
-		}
-	}
+    /**
+     * Return the (raw) singleton object registered under the given name,
+     * creating and registering a new one if none registered yet.
+     *
+     * @param beanName         the name of the bean
+     * @param singletonFactory the ObjectFactory to lazily create the singleton
+     *                         with, if necessary
+     * @return the registered singleton object
+     */
+    public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
+        Assert.notNull(beanName, "'beanName' must not be null");
+        synchronized (this.singletonObjects) {
+            Object singletonObject = this.singletonObjects.get(beanName);
+            if (singletonObject == null) {
+                if (this.singletonsCurrentlyInDestruction) {
+                    throw new BeanCreationNotAllowedException(beanName,
+                            "Singleton bean creation not allowed while the singletons of this factory are in destruction " +
+                                    "(Do not request a bean from a BeanFactory in a destroy method implementation!)");
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
+                }
+                beforeSingletonCreation(beanName);
+                boolean newSingleton = false;
+                boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
+                if (recordSuppressedExceptions) {
+                    this.suppressedExceptions = new LinkedHashSet<Exception>();
+                }
+                try {
+                    singletonObject = singletonFactory.getObject();
+                    newSingleton = true;
+                } catch (IllegalStateException ex) {
+                    // Has the singleton object implicitly appeared in the meantime ->
+                    // if yes, proceed with it since the exception indicates that state.
+                    singletonObject = this.singletonObjects.get(beanName);
+                    if (singletonObject == null) {
+                        throw ex;
+                    }
+                } catch (BeanCreationException ex) {
+                    if (recordSuppressedExceptions) {
+                        for (Exception suppressedException : this.suppressedExceptions) {
+                            ex.addRelatedCause(suppressedException);
+                        }
+                    }
+                    throw ex;
+                } finally {
+                    if (recordSuppressedExceptions) {
+                        this.suppressedExceptions = null;
+                    }
+                    afterSingletonCreation(beanName);
+                }
+                if (newSingleton) {
+                    addSingleton(beanName, singletonObject);
+                }
+            }
+            return (singletonObject != NULL_OBJECT ? singletonObject : null);
+        }
+    }
+
+    /**
+     * Register an Exception that happened to get suppressed during the creation of a
+     * singleton bean instance, e.g. a temporary circular reference resolution problem.
+     *
+     * @param ex the Exception to register
+     */
+    protected void onSuppressedException(Exception ex) {
+        synchronized (this.singletonObjects) {
+            if (this.suppressedExceptions != null) {
+                this.suppressedExceptions.add(ex);
+            }
+        }
+    }
+
+    /**
+     * Remove the bean with the given name from the singleton cache of this factory,
+     * to be able to clean up eager registration of a singleton if creation failed.
+     *
+     * @param beanName the name of the bean
+     * @see #getSingletonMutex()
+     */
+    protected void removeSingleton(String beanName) {
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.remove(beanName);
+            this.singletonFactories.remove(beanName);
+            this.earlySingletonObjects.remove(beanName);
+            this.registeredSingletons.remove(beanName);
+        }
+    }
+
+    @Override
+    public boolean containsSingleton(String beanName) {
+        return this.singletonObjects.containsKey(beanName);
+    }
+
+    @Override
+    public String[] getSingletonNames() {
+        synchronized (this.singletonObjects) {
+            return StringUtils.toStringArray(this.registeredSingletons);
+        }
+    }
+
+    @Override
+    public int getSingletonCount() {
+        synchronized (this.singletonObjects) {
+            return this.registeredSingletons.size();
+        }
+    }
 
 
-	/**
-	 * Add the given bean to the list of disposable beans in this registry.
-	 * <p>Disposable beans usually correspond to registered singletons,
-	 * matching the bean name but potentially being a different instance
-	 * (for example, a DisposableBean adapter for a singleton that does not
-	 * naturally implement Spring's DisposableBean interface).
-	 * @param beanName the name of the bean
-	 * @param bean the bean instance
-	 */
-	public void registerDisposableBean(String beanName, DisposableBean bean) {
-		synchronized (this.disposableBeans) {
-			this.disposableBeans.put(beanName, bean);
-		}
-	}
+    public void setCurrentlyInCreation(String beanName, boolean inCreation) {
+        Assert.notNull(beanName, "Bean name must not be null");
+        if (!inCreation) {
+            this.inCreationCheckExclusions.add(beanName);
+        } else {
+            this.inCreationCheckExclusions.remove(beanName);
+        }
+    }
 
-	/**
-	 * Register a containment relationship between two beans,
-	 * e.g. between an inner bean and its containing outer bean.
-	 * <p>Also registers the containing bean as dependent on the contained bean
-	 * in terms of destruction order.
-	 * @param containedBeanName the name of the contained (inner) bean
-	 * @param containingBeanName the name of the containing (outer) bean
-	 * @see #registerDependentBean
-	 */
-	public void registerContainedBean(String containedBeanName, String containingBeanName) {
-		// A quick check for an existing entry upfront, avoiding synchronization...
-		Set<String> containedBeans = this.containedBeanMap.get(containingBeanName);
-		if (containedBeans != null && containedBeans.contains(containedBeanName)) {
-			return;
-		}
+    public boolean isCurrentlyInCreation(String beanName) {
+        Assert.notNull(beanName, "Bean name must not be null");
+        return (!this.inCreationCheckExclusions.contains(beanName) && isActuallyInCreation(beanName));
+    }
 
-		// No entry yet -> fully synchronized manipulation of the containedBeans Set
-		synchronized (this.containedBeanMap) {
-			containedBeans = this.containedBeanMap.get(containingBeanName);
-			if (containedBeans == null) {
-				containedBeans = new LinkedHashSet<String>(8);
-				this.containedBeanMap.put(containingBeanName, containedBeans);
-			}
-			containedBeans.add(containedBeanName);
-		}
-		registerDependentBean(containedBeanName, containingBeanName);
-	}
+    protected boolean isActuallyInCreation(String beanName) {
+        return isSingletonCurrentlyInCreation(beanName);
+    }
 
-	/**
-	 * Register a dependent bean for the given bean,
-	 * to be destroyed before the given bean is destroyed.
-	 * @param beanName the name of the bean
-	 * @param dependentBeanName the name of the dependent bean
-	 */
-	public void registerDependentBean(String beanName, String dependentBeanName) {
-		// A quick check for an existing entry upfront, avoiding synchronization...
-		String canonicalName = canonicalName(beanName);
-		Set<String> dependentBeans = this.dependentBeanMap.get(canonicalName);
-		if (dependentBeans != null && dependentBeans.contains(dependentBeanName)) {
-			return;
-		}
+    /**
+     * Return whether the specified singleton bean is currently in creation
+     * (within the entire factory).
+     *
+     * @param beanName the name of the bean
+     */
+    public boolean isSingletonCurrentlyInCreation(String beanName) {
+        return this.singletonsCurrentlyInCreation.contains(beanName);
+    }
 
-		// No entry yet -> fully synchronized manipulation of the dependentBeans Set
-		synchronized (this.dependentBeanMap) {
-			dependentBeans = this.dependentBeanMap.get(canonicalName);
-			if (dependentBeans == null) {
-				dependentBeans = new LinkedHashSet<String>(8);
-				this.dependentBeanMap.put(canonicalName, dependentBeans);
-			}
-			dependentBeans.add(dependentBeanName);
-		}
-		synchronized (this.dependenciesForBeanMap) {
-			Set<String> dependenciesForBean = this.dependenciesForBeanMap.get(dependentBeanName);
-			if (dependenciesForBean == null) {
-				dependenciesForBean = new LinkedHashSet<String>(8);
-				this.dependenciesForBeanMap.put(dependentBeanName, dependenciesForBean);
-			}
-			dependenciesForBean.add(canonicalName);
-		}
-	}
+    /**
+     * Callback before singleton creation.
+     * <p>The default implementation register the singleton as currently in creation.
+     *
+     * @param beanName the name of the singleton about to be created
+     * @see #isSingletonCurrentlyInCreation
+     */
+    protected void beforeSingletonCreation(String beanName) {
+        if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) {
+            throw new BeanCurrentlyInCreationException(beanName);
+        }
+    }
 
-	/**
-	 * Determine whether the specified dependent bean has been registered as
-	 * dependent on the given bean or on any of its transitive dependencies.
-	 * @param beanName the name of the bean to check
-	 * @param dependentBeanName the name of the dependent bean
-	 * @since 4.0
-	 */
-	protected boolean isDependent(String beanName, String dependentBeanName) {
-		return isDependent(beanName, dependentBeanName, null);
-	}
+    /**
+     * Callback after singleton creation.
+     * <p>The default implementation marks the singleton as not in creation anymore.
+     *
+     * @param beanName the name of the singleton that has been created
+     * @see #isSingletonCurrentlyInCreation
+     */
+    protected void afterSingletonCreation(String beanName) {
+        if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.remove(beanName)) {
+            throw new IllegalStateException("Singleton '" + beanName + "' isn't currently in creation");
+        }
+    }
 
-	private boolean isDependent(String beanName, String dependentBeanName, Set<String> alreadySeen) {
-		String canonicalName = canonicalName(beanName);
-		if (alreadySeen != null && alreadySeen.contains(beanName)) {
-			return false;
-		}
-		Set<String> dependentBeans = this.dependentBeanMap.get(canonicalName);
-		if (dependentBeans == null) {
-			return false;
-		}
-		if (dependentBeans.contains(dependentBeanName)) {
-			return true;
-		}
-		for (String transitiveDependency : dependentBeans) {
-			if (alreadySeen == null) {
-				alreadySeen = new HashSet<String>();
-			}
-			alreadySeen.add(beanName);
-			if (isDependent(transitiveDependency, dependentBeanName, alreadySeen)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
-	/**
-	 * Determine whether a dependent bean has been registered for the given name.
-	 * @param beanName the name of the bean to check
-	 */
-	protected boolean hasDependentBean(String beanName) {
-		return this.dependentBeanMap.containsKey(beanName);
-	}
+    /**
+     * Add the given bean to the list of disposable beans in this registry.
+     * <p>Disposable beans usually correspond to registered singletons,
+     * matching the bean name but potentially being a different instance
+     * (for example, a DisposableBean adapter for a singleton that does not
+     * naturally implement Spring's DisposableBean interface).
+     *
+     * @param beanName the name of the bean
+     * @param bean     the bean instance
+     */
+    public void registerDisposableBean(String beanName, DisposableBean bean) {
+        synchronized (this.disposableBeans) {
+            this.disposableBeans.put(beanName, bean);
+        }
+    }
 
-	/**
-	 * Return the names of all beans which depend on the specified bean, if any.
-	 * @param beanName the name of the bean
-	 * @return the array of dependent bean names, or an empty array if none
-	 */
-	public String[] getDependentBeans(String beanName) {
-		Set<String> dependentBeans = this.dependentBeanMap.get(beanName);
-		if (dependentBeans == null) {
-			return new String[0];
-		}
-		return StringUtils.toStringArray(dependentBeans);
-	}
+    /**
+     * Register a containment relationship between two beans,
+     * e.g. between an inner bean and its containing outer bean.
+     * <p>Also registers the containing bean as dependent on the contained bean
+     * in terms of destruction order.
+     *
+     * @param containedBeanName  the name of the contained (inner) bean
+     * @param containingBeanName the name of the containing (outer) bean
+     * @see #registerDependentBean
+     */
+    public void registerContainedBean(String containedBeanName, String containingBeanName) {
+        // A quick check for an existing entry upfront, avoiding synchronization...
+        Set<String> containedBeans = this.containedBeanMap.get(containingBeanName);
+        if (containedBeans != null && containedBeans.contains(containedBeanName)) {
+            return;
+        }
 
-	/**
-	 * Return the names of all beans that the specified bean depends on, if any.
-	 * @param beanName the name of the bean
-	 * @return the array of names of beans which the bean depends on,
-	 * or an empty array if none
-	 */
-	public String[] getDependenciesForBean(String beanName) {
-		Set<String> dependenciesForBean = this.dependenciesForBeanMap.get(beanName);
-		if (dependenciesForBean == null) {
-			return new String[0];
-		}
-		return dependenciesForBean.toArray(new String[dependenciesForBean.size()]);
-	}
+        // No entry yet -> fully synchronized manipulation of the containedBeans Set
+        synchronized (this.containedBeanMap) {
+            containedBeans = this.containedBeanMap.get(containingBeanName);
+            if (containedBeans == null) {
+                containedBeans = new LinkedHashSet<String>(8);
+                this.containedBeanMap.put(containingBeanName, containedBeans);
+            }
+            containedBeans.add(containedBeanName);
+        }
+        registerDependentBean(containedBeanName, containingBeanName);
+    }
 
-	public void destroySingletons() {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Destroying singletons in " + this);
-		}
-		synchronized (this.singletonObjects) {
-			this.singletonsCurrentlyInDestruction = true;
-		}
+    /**
+     * Register a dependent bean for the given bean,
+     * to be destroyed before the given bean is destroyed.
+     *
+     * @param beanName          the name of the bean
+     * @param dependentBeanName the name of the dependent bean
+     */
+    public void registerDependentBean(String beanName, String dependentBeanName) {
+        // A quick check for an existing entry upfront, avoiding synchronization...
+        String canonicalName = canonicalName(beanName);
+        Set<String> dependentBeans = this.dependentBeanMap.get(canonicalName);
+        if (dependentBeans != null && dependentBeans.contains(dependentBeanName)) {
+            return;
+        }
 
-		String[] disposableBeanNames;
-		synchronized (this.disposableBeans) {
-			disposableBeanNames = StringUtils.toStringArray(this.disposableBeans.keySet());
-		}
-		for (int i = disposableBeanNames.length - 1; i >= 0; i--) {
-			destroySingleton(disposableBeanNames[i]);
-		}
+        // No entry yet -> fully synchronized manipulation of the dependentBeans Set
+        synchronized (this.dependentBeanMap) {
+            dependentBeans = this.dependentBeanMap.get(canonicalName);
+            if (dependentBeans == null) {
+                dependentBeans = new LinkedHashSet<String>(8);
+                this.dependentBeanMap.put(canonicalName, dependentBeans);
+            }
+            dependentBeans.add(dependentBeanName);
+        }
+        synchronized (this.dependenciesForBeanMap) {
+            Set<String> dependenciesForBean = this.dependenciesForBeanMap.get(dependentBeanName);
+            if (dependenciesForBean == null) {
+                dependenciesForBean = new LinkedHashSet<String>(8);
+                this.dependenciesForBeanMap.put(dependentBeanName, dependenciesForBean);
+            }
+            dependenciesForBean.add(canonicalName);
+        }
+    }
 
-		this.containedBeanMap.clear();
-		this.dependentBeanMap.clear();
-		this.dependenciesForBeanMap.clear();
+    /**
+     * Determine whether the specified dependent bean has been registered as
+     * dependent on the given bean or on any of its transitive dependencies.
+     *
+     * @param beanName          the name of the bean to check
+     * @param dependentBeanName the name of the dependent bean
+     * @since 4.0
+     */
+    protected boolean isDependent(String beanName, String dependentBeanName) {
+        return isDependent(beanName, dependentBeanName, null);
+    }
 
-		synchronized (this.singletonObjects) {
-			this.singletonObjects.clear();
-			this.singletonFactories.clear();
-			this.earlySingletonObjects.clear();
-			this.registeredSingletons.clear();
-			this.singletonsCurrentlyInDestruction = false;
-		}
-	}
+    private boolean isDependent(String beanName, String dependentBeanName, Set<String> alreadySeen) {
+        String canonicalName = canonicalName(beanName);
+        if (alreadySeen != null && alreadySeen.contains(beanName)) {
+            return false;
+        }
+        Set<String> dependentBeans = this.dependentBeanMap.get(canonicalName);
+        if (dependentBeans == null) {
+            return false;
+        }
+        if (dependentBeans.contains(dependentBeanName)) {
+            return true;
+        }
+        for (String transitiveDependency : dependentBeans) {
+            if (alreadySeen == null) {
+                alreadySeen = new HashSet<String>();
+            }
+            alreadySeen.add(beanName);
+            if (isDependent(transitiveDependency, dependentBeanName, alreadySeen)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Destroy the given bean. Delegates to {@code destroyBean}
-	 * if a corresponding disposable bean instance is found.
-	 * @param beanName the name of the bean
-	 * @see #destroyBean
-	 */
-	public void destroySingleton(String beanName) {
-		// Remove a registered singleton of the given name, if any.
-		removeSingleton(beanName);
+    /**
+     * Determine whether a dependent bean has been registered for the given name.
+     *
+     * @param beanName the name of the bean to check
+     */
+    protected boolean hasDependentBean(String beanName) {
+        return this.dependentBeanMap.containsKey(beanName);
+    }
 
-		// Destroy the corresponding DisposableBean instance.
-		DisposableBean disposableBean;
-		synchronized (this.disposableBeans) {
-			disposableBean = (DisposableBean) this.disposableBeans.remove(beanName);
-		}
-		destroyBean(beanName, disposableBean);
-	}
+    /**
+     * Return the names of all beans which depend on the specified bean, if any.
+     *
+     * @param beanName the name of the bean
+     * @return the array of dependent bean names, or an empty array if none
+     */
+    public String[] getDependentBeans(String beanName) {
+        Set<String> dependentBeans = this.dependentBeanMap.get(beanName);
+        if (dependentBeans == null) {
+            return new String[0];
+        }
+        return StringUtils.toStringArray(dependentBeans);
+    }
 
-	/**
-	 * Destroy the given bean. Must destroy beans that depend on the given
-	 * bean before the bean itself. Should not throw any exceptions.
-	 * @param beanName the name of the bean
-	 * @param bean the bean instance to destroy
-	 */
-	protected void destroyBean(String beanName, DisposableBean bean) {
-		// Trigger destruction of dependent beans first...
-		Set<String> dependencies = this.dependentBeanMap.remove(beanName);
-		if (dependencies != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Retrieved dependent beans for bean '" + beanName + "': " + dependencies);
-			}
-			for (String dependentBeanName : dependencies) {
-				destroySingleton(dependentBeanName);
-			}
-		}
+    /**
+     * Return the names of all beans that the specified bean depends on, if any.
+     *
+     * @param beanName the name of the bean
+     * @return the array of names of beans which the bean depends on,
+     * or an empty array if none
+     */
+    public String[] getDependenciesForBean(String beanName) {
+        Set<String> dependenciesForBean = this.dependenciesForBeanMap.get(beanName);
+        if (dependenciesForBean == null) {
+            return new String[0];
+        }
+        return dependenciesForBean.toArray(new String[dependenciesForBean.size()]);
+    }
 
-		// Actually destroy the bean now...
-		if (bean != null) {
-			try {
-				bean.destroy();
-			}
-			catch (Throwable ex) {
-				logger.error("Destroy method on bean with name '" + beanName + "' threw an exception", ex);
-			}
-		}
+    public void destroySingletons() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Destroying singletons in " + this);
+        }
+        synchronized (this.singletonObjects) {
+            this.singletonsCurrentlyInDestruction = true;
+        }
 
-		// Trigger destruction of contained beans...
-		Set<String> containedBeans = this.containedBeanMap.remove(beanName);
-		if (containedBeans != null) {
-			for (String containedBeanName : containedBeans) {
-				destroySingleton(containedBeanName);
-			}
-		}
+        String[] disposableBeanNames;
+        synchronized (this.disposableBeans) {
+            disposableBeanNames = StringUtils.toStringArray(this.disposableBeans.keySet());
+        }
+        for (int i = disposableBeanNames.length - 1; i >= 0; i--) {
+            destroySingleton(disposableBeanNames[i]);
+        }
 
-		// Remove destroyed bean from other beans' dependencies.
-		synchronized (this.dependentBeanMap) {
-			for (Iterator<Map.Entry<String, Set<String>>> it = this.dependentBeanMap.entrySet().iterator(); it.hasNext();) {
-				Map.Entry<String, Set<String>> entry = it.next();
-				Set<String> dependenciesToClean = entry.getValue();
-				dependenciesToClean.remove(beanName);
-				if (dependenciesToClean.isEmpty()) {
-					it.remove();
-				}
-			}
-		}
+        this.containedBeanMap.clear();
+        this.dependentBeanMap.clear();
+        this.dependenciesForBeanMap.clear();
 
-		// Remove destroyed bean's prepared dependency information.
-		this.dependenciesForBeanMap.remove(beanName);
-	}
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.clear();
+            this.singletonFactories.clear();
+            this.earlySingletonObjects.clear();
+            this.registeredSingletons.clear();
+            this.singletonsCurrentlyInDestruction = false;
+        }
+    }
 
-	/**
-	 * Exposes the singleton mutex to subclasses and external collaborators.
-	 * <p>Subclasses should synchronize on the given Object if they perform
-	 * any sort of extended singleton creation phase. In particular, subclasses
-	 * should <i>not</i> have their own mutexes involved in singleton creation,
-	 * to avoid the potential for deadlocks in lazy-init situations.
-	 */
-	public final Object getSingletonMutex() {
-		return this.singletonObjects;
-	}
+    /**
+     * Destroy the given bean. Delegates to {@code destroyBean}
+     * if a corresponding disposable bean instance is found.
+     *
+     * @param beanName the name of the bean
+     * @see #destroyBean
+     */
+    public void destroySingleton(String beanName) {
+        // Remove a registered singleton of the given name, if any.
+        removeSingleton(beanName);
+
+        // Destroy the corresponding DisposableBean instance.
+        DisposableBean disposableBean;
+        synchronized (this.disposableBeans) {
+            disposableBean = (DisposableBean) this.disposableBeans.remove(beanName);
+        }
+        destroyBean(beanName, disposableBean);
+    }
+
+    /**
+     * Destroy the given bean. Must destroy beans that depend on the given
+     * bean before the bean itself. Should not throw any exceptions.
+     *
+     * @param beanName the name of the bean
+     * @param bean     the bean instance to destroy
+     */
+    protected void destroyBean(String beanName, DisposableBean bean) {
+        // Trigger destruction of dependent beans first...
+        Set<String> dependencies = this.dependentBeanMap.remove(beanName);
+        if (dependencies != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Retrieved dependent beans for bean '" + beanName + "': " + dependencies);
+            }
+            for (String dependentBeanName : dependencies) {
+                destroySingleton(dependentBeanName);
+            }
+        }
+
+        // Actually destroy the bean now...
+        if (bean != null) {
+            try {
+                bean.destroy();
+            } catch (Throwable ex) {
+                logger.error("Destroy method on bean with name '" + beanName + "' threw an exception", ex);
+            }
+        }
+
+        // Trigger destruction of contained beans...
+        Set<String> containedBeans = this.containedBeanMap.remove(beanName);
+        if (containedBeans != null) {
+            for (String containedBeanName : containedBeans) {
+                destroySingleton(containedBeanName);
+            }
+        }
+
+        // Remove destroyed bean from other beans' dependencies.
+        synchronized (this.dependentBeanMap) {
+            for (Iterator<Map.Entry<String, Set<String>>> it = this.dependentBeanMap.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<String, Set<String>> entry = it.next();
+                Set<String> dependenciesToClean = entry.getValue();
+                dependenciesToClean.remove(beanName);
+                if (dependenciesToClean.isEmpty()) {
+                    it.remove();
+                }
+            }
+        }
+
+        // Remove destroyed bean's prepared dependency information.
+        this.dependenciesForBeanMap.remove(beanName);
+    }
+
+    /**
+     * Exposes the singleton mutex to subclasses and external collaborators.
+     * <p>Subclasses should synchronize on the given Object if they perform
+     * any sort of extended singleton creation phase. In particular, subclasses
+     * should <i>not</i> have their own mutexes involved in singleton creation,
+     * to avoid the potential for deadlocks in lazy-init situations.
+     */
+    public final Object getSingletonMutex() {
+        return this.singletonObjects;
+    }
 
 }
