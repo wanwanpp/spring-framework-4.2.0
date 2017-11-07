@@ -1,6 +1,6 @@
 package com.wp.debugSpring;
 
-public class Foo {
+public class Foo extends ParentOfFoo {
 
     public void execute() {
 

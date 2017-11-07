@@ -222,7 +222,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
                     if (singletonFactory != null) {
                         singletonObject = singletonFactory.getObject();   //从ObjectFactory中获取实例，可能属性还没有填充完整。
                         this.earlySingletonObjects.put(beanName, singletonObject);
-                        this.singletonFactories.remove(beanName);
+                        this.singletonFactories.remove(beanName);             //ObjectFactory只使用一次
                     }
                 }
             }
