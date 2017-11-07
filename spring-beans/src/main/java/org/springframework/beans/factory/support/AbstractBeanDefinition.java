@@ -400,7 +400,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
             return null;
         }
         Class<?> resolvedClass = ClassUtils.forName(className, classLoader);
-        this.beanClass = resolvedClass;
+        this.beanClass = resolvedClass;    //之前设置beanClass时设置的可能是String，现在设置为其Class对象。
         return resolvedClass;
     }
 
@@ -853,8 +853,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     }
 
     /**
-     * Return whether this bean definition is 'synthetic', that is,
-     * not defined by the application itself.
+     * Return whether this bean definition is 'synthetic', that is, not defined by the application itself.
      */
     public boolean isSynthetic() {
         return this.synthetic;
@@ -978,6 +977,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
                             "' on class [" + getBeanClassName() + "]");
         } else if (count == 1) {
             // Mark override as not overloaded, to avoid the overhead of arg type checking.
+            //标记override为不覆盖,避免参数类型检查的开销。
             mo.setOverloaded(false);
         }
     }

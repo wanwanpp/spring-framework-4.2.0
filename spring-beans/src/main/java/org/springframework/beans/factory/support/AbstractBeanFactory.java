@@ -272,6 +272,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 //得到完整的BeanDefinition，即bean可能是某个类的子类，即它继承了某个类，则将它和它父类的BeanDefinition进行合并
                 //若没有父类，则深复制到一个RootBeanDefinition。
                 //如果指定了parent属性，但是对应的parent的BeanDefinition不存在，会报异常NoSuchBeanDefinitionException。
+                //没有指定scope属性的，默认为singleton。
                 final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
                 checkMergedBeanDefinition(mbd, beanName, args);            //就是简单的判断mbd是否为abstract。
 
@@ -283,7 +284,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                             throw new BeanCreationException(mbd.getResourceDescription(), beanName,
                                     "Circular depends-on relationship between '" + beanName + "' and '" + dependsOnBean + "'");
                         }
-                        registerDependentBean(dependsOnBean, beanName);
+                        registerDependentBean(dependsOnBean, beanName);             //注册bean与依赖的bean。
                         getBean(dependsOnBean);
                     }
                 }
@@ -1359,8 +1360,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     }
 
     /**
-     * Evaluate the given String as contained in a bean definition,
-     * potentially resolving it as an expression.
+     * Evaluate the given String as contained in a bean definition, potentially resolving it as an expression.
      *
      * @param value          the value to check
      * @param beanDefinition the bean definition that the value comes from
