@@ -305,6 +305,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                             }
                         }
                     });
+                    //处理是否是FactoryBean的情况。
                     bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
                 } else if (mbd.isPrototype()) {
                     // It's a prototype -> create a new instance.
@@ -349,6 +350,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         }
 
         // Check if required type matches the type of the actual bean instance.
+        //检测bean的实例是否和需要的类型匹配
         if (requiredType != null && bean != null && !requiredType.isAssignableFrom(bean.getClass())) {
             try {
                 return getTypeConverter().convertIfNecessary(bean, requiredType);
