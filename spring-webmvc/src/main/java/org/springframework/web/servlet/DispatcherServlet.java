@@ -941,7 +941,7 @@ public class DispatcherServlet extends FrameworkServlet {
             }
         }
 
-        // Make framework objects available to handlers and view objects.
+        // Make framework objects available to handlers and view objects.   将需要用到的组件放到request当中。
         request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());
         request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);
         request.setAttribute(THEME_RESOLVER_ATTRIBUTE, this.themeResolver);
@@ -990,10 +990,11 @@ public class DispatcherServlet extends FrameworkServlet {
             Exception dispatchException = null;
 
             try {
+                //检测request是否为文件上传。如果是就将request封装为处理文件上传类型的request，否则request不变。
                 processedRequest = checkMultipart(request);
                 multipartRequestParsed = (processedRequest != request);
 
-                // Determine handler for the current request.
+                // Determine handler for the current request.  确定当前request适合的handler
                 mappedHandler = getHandler(processedRequest);
                 if (mappedHandler == null || mappedHandler.getHandler() == null) {
                     noHandlerFound(processedRequest, response);
