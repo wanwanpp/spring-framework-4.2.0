@@ -994,21 +994,22 @@ public class DispatcherServlet extends FrameworkServlet {
                 processedRequest = checkMultipart(request);
                 multipartRequestParsed = (processedRequest != request);
 
-                // Determine handler for the current request.  确定当前request适合的handler
+                // Determine handler for the current request.  确定当前request适合的HandlerExecutionChain，里面封装了真正处理请求的HandlerMethod和拦截器。
                 mappedHandler = getHandler(processedRequest);
+                //没找到合适的Handler则通过response返回错误。
                 if (mappedHandler == null || mappedHandler.getHandler() == null) {
                     noHandlerFound(processedRequest, response);
                     return;
                 }
 
-                // Determine handler adapter for the current request.
+                // Determine handler adapter for the current request.  获取支持当前handler的HandlerAdapter对象。
                 HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
                 // Process last-modified header, if supported by the handler.
                 String method = request.getMethod();
                 boolean isGet = "GET".equals(method);
                 if (isGet || "HEAD".equals(method)) {
-                    long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
+                    long lastModified = ha.getLastModified(request, mappedHandler.getHandler());        //RequestMappingHandlerAdapter中的实现总是返回-1，应该是表示不具有判断请求是否改变的功能。
                     if (logger.isDebugEnabled()) {
                         logger.debug("Last-Modified value for [" + getRequestUri(request) + "] is: " + lastModified);
                     }
@@ -1016,7 +1017,7 @@ public class DispatcherServlet extends FrameworkServlet {
                         return;
                     }
                 }
-
+//执行HandlerExecutionChain中的拦截器。
                 if (!mappedHandler.applyPreHandle(processedRequest, response)) {
                     return;
                 }
@@ -1172,6 +1173,7 @@ public class DispatcherServlet extends FrameworkServlet {
      * @return the HandlerExecutionChain, or {@code null} if no handler could be found
      */
     protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
+        //遍历已经注册了的HandlerMapping，通过HandlerMapping的getHandler方法找到HandlerMethod和拦截器，将这两者封装到HandlerExecutionChain中返回。
         for (HandlerMapping hm : this.handlerMappings) {
             if (logger.isTraceEnabled()) {
                 logger.trace(
@@ -1211,7 +1213,7 @@ public class DispatcherServlet extends FrameworkServlet {
      *
      * @param handler the handler object to find an adapter for
      * @throws ServletException if no HandlerAdapter can be found for the handler. This is a fatal error.
-     */
+     *///遍历HandlerAdapter，若其中一个HandlerAdapter对象support当前的handler，则使用这个HandlerAdapter。
     protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
         for (HandlerAdapter ha : this.handlerAdapters) {
             if (logger.isTraceEnabled()) {

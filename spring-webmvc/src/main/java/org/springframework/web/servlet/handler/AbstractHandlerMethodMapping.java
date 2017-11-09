@@ -310,9 +310,9 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		if (logger.isDebugEnabled()) {
 			logger.debug("Looking up handler method for path " + lookupPath);
 		}
-		this.mappingRegistry.acquireReadLock();
+		this.mappingRegistry.acquireReadLock();        //上锁
 		try {
-			HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request);
+			HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request);               //实际处理请求的方法。
 			if (logger.isDebugEnabled()) {
 				if (handlerMethod != null) {
 					logger.debug("Returning handler method [" + handlerMethod + "]");
