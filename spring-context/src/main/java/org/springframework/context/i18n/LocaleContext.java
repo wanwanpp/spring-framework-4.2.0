@@ -29,6 +29,7 @@ import java.util.Locale;
  * @see LocaleContextHolder#getLocale()
  * @see TimeZoneAwareLocaleContext
  */
+//用于确定当前的语言环境。
 public interface LocaleContext {
 
 	/**
