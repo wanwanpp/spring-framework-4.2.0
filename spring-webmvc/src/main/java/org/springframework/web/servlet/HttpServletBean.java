@@ -133,7 +133,8 @@ public abstract class HttpServletBean extends HttpServlet
             throw ex;
         }
 
-        // Let subclasses do whatever initialization they like.     子类实现
+        // Let subclasses do whatever initialization they like.
+        // 子类实现，FrameworkServlet中实现了这个方法，用于为当前servlet创建了XmlWebApplicationContext，并将其设置到servletContext中。
         initServletBean();
 
         if (logger.isDebugEnabled()) {
