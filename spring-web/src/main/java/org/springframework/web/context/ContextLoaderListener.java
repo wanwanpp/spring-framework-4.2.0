@@ -101,6 +101,7 @@ public class ContextLoaderListener extends ContextLoader implements ServletConte
 
 	/**
 	 * Initialize the root web application context.
+	 * 主要是创建XmlWebApplicationContext，及对它的设置，和XmlWebApplicationContext中的ioc容器的启动
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent event) {

@@ -324,6 +324,9 @@ public class ContextLoader {
 						ApplicationContext parent = loadParentContext(servletContext);  //尝试获取parentContext。
 						cwac.setParent(parent);
 					}
+					//一些WebApplicationContext的设置如：id，servletContext，configLocation。
+					// 还有自定义ApplicationContextInitializer，在ioc的refresh()方法调用之前运行。
+					//最后就是调用refresh方法，启动ioc容器。
 					configureAndRefreshWebApplicationContext(cwac, servletContext);
 				}
 			}
@@ -442,9 +445,9 @@ public class ContextLoader {
 		if (env instanceof ConfigurableWebEnvironment) {
 			((ConfigurableWebEnvironment) env).initPropertySources(sc, null);
 		}
-//定制化上下文
+//定制化上下文，自定义ApplicationContextInitializer。
 		customizeContext(sc, wac);
-		wac.refresh();
+		wac.refresh();         //启动ioc容器。
 	}
 
 	/**
