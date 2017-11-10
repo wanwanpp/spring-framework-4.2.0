@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Juergen Hoeller
  * @since 2.0
  */
+//在没有viewName时根据request生成一个合适的viewName
 public interface RequestToViewNameTranslator {
 
 	/**

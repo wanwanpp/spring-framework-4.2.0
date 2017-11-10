@@ -1044,7 +1044,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
                     }
                 }
             }
-
+            //发布请求处理完的事件。
             publishRequestHandledEvent(request, response, startTime, failureCause);
         }
     }

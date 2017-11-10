@@ -1017,19 +1017,21 @@ public class DispatcherServlet extends FrameworkServlet {
                         return;
                     }
                 }
-//执行HandlerExecutionChain中的拦截器。
+//执行HandlerExecutionChain中拦截器的前置方法。
                 if (!mappedHandler.applyPreHandle(processedRequest, response)) {
                     return;
                 }
 
                 // Actually invoke the handler.
+                //根据request对匹配的HandlerMethod的参数进行解析，执行HandlerMethod方法。对返回值进行解析，得到Model和View，返回ModelAndView
                 mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
                 if (asyncManager.isConcurrentHandlingStarted()) {
                     return;
                 }
-
+                //若ModelAndView中的View属性为null，则使用RequestToViewNameTranslator根据request为它设置view
                 applyDefaultViewName(processedRequest, mv);
+                //执行HandlerExecutionChain中拦截器的后置方法。
                 mappedHandler.applyPostHandle(processedRequest, response, mv);
             } catch (Exception ex) {
                 dispatchException = ex;
@@ -1102,6 +1104,7 @@ public class DispatcherServlet extends FrameworkServlet {
         }
 
         if (mappedHandler != null) {
+            //执行HandlerExecutionChain中拦截器的afterCompletion操作。
             mappedHandler.triggerAfterCompletion(request, response, null);
         }
     }
@@ -1284,8 +1287,8 @@ public class DispatcherServlet extends FrameworkServlet {
         response.setLocale(locale);
 
         View view;
-        if (mv.isReference()) {
-            // We need to resolve the view name.
+        if (mv.isReference()) {      //判断mv中的view的类型是否为String，如果是的话，就需要解析此view。
+            // We need to resolve the view name. 遍历viewResolver解析mv中的viewName，返回解析后的View
             view = resolveViewName(mv.getViewName(), mv.getModelInternal(), locale, request);
             if (view == null) {
                 throw new ServletException("Could not resolve view with name '" + mv.getViewName() +
@@ -1304,7 +1307,7 @@ public class DispatcherServlet extends FrameworkServlet {
         if (logger.isDebugEnabled()) {
             logger.debug("Rendering view [" + view + "] in DispatcherServlet with name '" + getServletName() + "'");
         }
-        try {
+        try {//使用View对象进行页面渲染（填充Model对象）并返回。
             view.render(mv.getModelInternal(), request, response);
         } catch (Exception ex) {
             if (logger.isDebugEnabled()) {

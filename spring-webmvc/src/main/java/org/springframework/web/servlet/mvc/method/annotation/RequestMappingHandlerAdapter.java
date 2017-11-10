@@ -879,7 +879,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		}
 		ModelMap model = mavContainer.getModel();
 		ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model);
-		if (!mavContainer.isViewReference()) {
+		if (!mavContainer.isViewReference()) {           //判断mavContainer中的view是否是一个View的引用（即ViewName）
 			mav.setView((View) mavContainer.getView());
 		}
 		if (model instanceof RedirectAttributes) {

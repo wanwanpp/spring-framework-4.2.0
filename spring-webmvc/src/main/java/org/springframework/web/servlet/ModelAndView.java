@@ -16,10 +16,10 @@
 
 package org.springframework.web.servlet;
 
-import java.util.Map;
-
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
+
+import java.util.Map;
 
 /**
  * Holder for both Model and View in the web MVC framework.
@@ -280,6 +280,7 @@ public class ModelAndView {
 	 * <strong>after</strong> the call to {@link #clear}.
 	 * @see #clear()
 	 */
+	//表示此ModelAndView没用了，设置了cleared标志，且model和view都为空了
 	public boolean wasCleared() {
 		return (this.cleared && isEmpty());
 	}
