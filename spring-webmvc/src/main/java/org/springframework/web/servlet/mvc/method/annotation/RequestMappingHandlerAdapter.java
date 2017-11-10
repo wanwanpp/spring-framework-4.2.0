@@ -742,7 +742,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 		WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 		ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
-
+//将HandlerMethod包装成ServletInvocableHandlerMethod类类真正执行方法。
 		ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 		invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 		invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);

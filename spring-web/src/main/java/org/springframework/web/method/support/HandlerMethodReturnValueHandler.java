@@ -27,6 +27,9 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @since 3.1
  * @see HandlerMethodArgumentResolver
  */
+//用于处理一个handlerMethod执行后返回的值。
+	//第一个方法定义了使用此handler的条件
+	//第二个方法定义了handler的handle方法。
 public interface HandlerMethodReturnValueHandler {
 
 	/**
@@ -51,6 +54,10 @@ public interface HandlerMethodReturnValueHandler {
 	 * @param webRequest the current request
 	 * @throws Exception if the return value handling results in an error
 	 */
+	//处理返回值
+	//1. 给model添加属性。
+	//2. 设置view
+	//3. 调用setRequestHandled方法设置为true。
 	void handleReturnValue(Object returnValue, MethodParameter returnType,
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception;
 
