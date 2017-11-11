@@ -14,7 +14,7 @@ public class TestFoo {
 //        Foo bean = (Foo) factory.getBean("foo");
 //        bean.execute();
 
-        ClassPathResource resource = new ClassPathResource("com\\wp\\debugSpring\\testbean.xml");
+        ClassPathResource resource = new ClassPathResource("com\\wp\\ioc\\testbean.xml");
 //        ClassPathResource resource = new ClassPathResource("com/wp/debugSpring/testbean.xml");
         DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);

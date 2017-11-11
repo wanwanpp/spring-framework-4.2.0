@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <bean id="defaultInvokeMethod" class="com.wp.aop.impl.DefaultInvokeMethod"/>
+    <bean id="timeMonitorHandler" class="com.wp.aop.TimeMonitorHandler"/>
+
+    <aop:config proxy-target-class="true">
+        <aop:aspect id="time" ref="timeMonitorHandler">
+            <aop:pointcut id="addAllMethod" expression="execution(* com.wp.aop.InvokableMethod.*(..))"/>
+            <aop:before method="before" pointcut-ref="addAllMethod"/>
+            <aop:after method="after" pointcut-ref="addAllMethod"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>
