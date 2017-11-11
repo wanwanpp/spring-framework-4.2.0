@@ -1,4 +1,4 @@
-package com.wp.debugSpring;
+package com.wp.ioc;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

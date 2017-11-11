@@ -1,4 +1,4 @@
-package com.wp.debugSpring;
+package com.wp.ioc;
 
 /**
  * Created by 王萍 on 2017/11/7 0007.

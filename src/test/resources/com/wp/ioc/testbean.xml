@@ -3,14 +3,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="helloBeanPostProcessor" class="com.wp.debugSpring.HelloBeanPostProcessor"/>
+    <bean id="helloBeanPostProcessor" class="com.wp.ioc.HelloBeanPostProcessor"/>
 
     <!--java类之间存在继承关系的才能使用parent属性-->
-    <bean id="foo" name="wanwanpp" class="com.wp.debugSpring.Foo" parent="parentOfFoo"/>
+    <bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo" parent="parentOfFoo"/>
 
-    <bean id="parentOfFoo" class="com.wp.debugSpring.ParentOfFoo">
+    <bean id="parentOfFoo" class="com.wp.ioc.ParentOfFoo">
         <property name="name" value="wangping"/>
     </bean>
 
-    <bean id="MyInstantiationAwareBeanPostProcessor" class="com.wp.debugSpring.MyInstantiationAwareBeanPostProcessor"/>
+    <bean id="MyInstantiationAwareBeanPostProcessor" class="com.wp.ioc.MyInstantiationAwareBeanPostProcessor"/>
 </beans>

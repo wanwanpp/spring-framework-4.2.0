@@ -1,4 +1,4 @@
-package com.wp.debugSpring;
+package com.wp.ioc;
 
 import org.junit.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;

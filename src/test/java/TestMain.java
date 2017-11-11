@@ -1,4 +1,4 @@
-import com.wp.debugSpring.Foo;
+import com.wp.ioc.Foo;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
