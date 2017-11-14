@@ -16,11 +16,6 @@
 
 package org.springframework.beans.factory.xml;
 
-import java.io.StringReader;
-
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.parsing.ProblemReporter;
@@ -31,6 +26,10 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
 
 /**
  * Extension of {@link org.springframework.beans.factory.parsing.ReaderContext},
@@ -89,6 +88,13 @@ public class XmlReaderContext extends ReaderContext {
 	}
 
 	public String registerWithGeneratedName(BeanDefinition beanDefinition) {
+		/**
+		 * 获取注册的名字BeanName，和<bean>的注册差不多，使用的是Class全路径+"#"+全局计数器的方式，
+		 * 其中的Class全路径为org.springframework.aop.aspectj.AspectJPointcutAdvisor，依次类推，
+		 * 每一个BeanName应当为org.springframework.aop.aspectj.AspectJPointcutAdvisor#0、
+		 * org.springframework.aop.aspectj.AspectJPointcutAdvisor#1、
+		 *org.springframework.aop.aspectj.AspectJPointcutAdvisor#2    这样下去。
+		 */
 		String generatedName = generateBeanName(beanDefinition);
 		getRegistry().registerBeanDefinition(generatedName, beanDefinition);
 		return generatedName;

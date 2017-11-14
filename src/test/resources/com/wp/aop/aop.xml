@@ -10,6 +10,8 @@
     <bean id="defaultInvokeMethod" class="com.wp.aop.impl.DefaultInvokeMethod"/>
     <bean id="timeMonitorHandler" class="com.wp.aop.TimeMonitorHandler"/>
 
+    <!--注解配置-->
+    <!--<aop:aspectj-autoproxy proxy-target-class="true"/>-->
     <aop:config proxy-target-class="true">
         <aop:aspect id="time" ref="timeMonitorHandler">
             <aop:pointcut id="addAllMethod" expression="execution(* com.wp.aop.InvokableMethod.*(..))"/>

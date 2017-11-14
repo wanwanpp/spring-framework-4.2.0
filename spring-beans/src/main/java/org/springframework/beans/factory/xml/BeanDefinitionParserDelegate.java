@@ -1319,7 +1319,9 @@ public class BeanDefinitionParserDelegate {
     }
 
     public BeanDefinition parseCustomElement(Element ele, BeanDefinition containingBd) {
+        //获取命名空间，如：http://www.springframework.org/schema/aop
         String namespaceUri = getNamespaceURI(ele);
+        //或去命名空间处理器，如aop对应的处理器org.springframework.aop.config.AopNamespaceHandler。
         NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
         if (handler == null) {
             error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);

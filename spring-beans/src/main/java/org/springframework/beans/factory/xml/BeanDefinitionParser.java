@@ -51,6 +51,7 @@ public interface BeanDefinitionParser {
 	 * provides access to a {@link org.springframework.beans.factory.support.BeanDefinitionRegistry}
 	 * @return the primary {@link BeanDefinition}
 	 */
+	//将标签解析为BeanDefinition。
 	BeanDefinition parse(Element element, ParserContext parserContext);
 
 }

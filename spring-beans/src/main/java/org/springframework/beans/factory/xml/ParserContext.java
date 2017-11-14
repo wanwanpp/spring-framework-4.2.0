@@ -16,14 +16,14 @@
 
 package org.springframework.beans.factory.xml;
 
-import java.util.Stack;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.parsing.ComponentDefinition;
 import org.springframework.beans.factory.parsing.CompositeComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+
+import java.util.Stack;
 
 /**
  * Context that gets passed along a bean definition parsing process,
@@ -36,6 +36,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
  * @see XmlReaderContext
  * @see BeanDefinitionParserDelegate
  */
+//传递bean definition在解析过程中，封装所有相关配置以及状态。
 public final class ParserContext {
 
 	private final XmlReaderContext readerContext;

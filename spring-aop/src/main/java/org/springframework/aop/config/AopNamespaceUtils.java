@@ -26,7 +26,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 /**
  * Utility class for handling registration of auto-proxy creators used internally
  * by the '{@code aop}' namespace tags.
- *
+ * <p>
  * <p>Only a single auto-proxy creator can be registered and multiple tags may wish
  * to register different concrete implementations. As such this class delegates to
  * {@link AopConfigUtils} which wraps a simple escalation protocol. Therefore classes
@@ -36,68 +36,68 @@ import org.springframework.beans.factory.xml.ParserContext;
  * @author Rob Harrop
  * @author Juergen Hoeller
  * @author Mark Fisher
- * @since 2.0
  * @see AopConfigUtils
+ * @since 2.0
  */
 public abstract class AopNamespaceUtils {
 
-	/**
-	 * The {@code proxy-target-class} attribute as found on AOP-related XML tags.
-	 */
-	public static final String PROXY_TARGET_CLASS_ATTRIBUTE = "proxy-target-class";
+    /**
+     * The {@code proxy-target-class} attribute as found on AOP-related XML tags.
+     */
+    public static final String PROXY_TARGET_CLASS_ATTRIBUTE = "proxy-target-class";
 
-	/**
-	 * The {@code expose-proxy} attribute as found on AOP-related XML tags.
-	 */
-	private static final String EXPOSE_PROXY_ATTRIBUTE = "expose-proxy";
+    /**
+     * The {@code expose-proxy} attribute as found on AOP-related XML tags.
+     */
+    private static final String EXPOSE_PROXY_ATTRIBUTE = "expose-proxy";
 
 
-	public static void registerAutoProxyCreatorIfNecessary(
-			ParserContext parserContext, Element sourceElement) {
+    public static void registerAutoProxyCreatorIfNecessary(
+            ParserContext parserContext, Element sourceElement) {
 
-		BeanDefinition beanDefinition = AopConfigUtils.registerAutoProxyCreatorIfNecessary(
-				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
-		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
-		registerComponentIfNecessary(beanDefinition, parserContext);
-	}
+        BeanDefinition beanDefinition = AopConfigUtils.registerAutoProxyCreatorIfNecessary(
+                parserContext.getRegistry(), parserContext.extractSource(sourceElement));
+        useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
+        registerComponentIfNecessary(beanDefinition, parserContext);
+    }
 
-	public static void registerAspectJAutoProxyCreatorIfNecessary(
-			ParserContext parserContext, Element sourceElement) {
+    public static void registerAspectJAutoProxyCreatorIfNecessary(
+            ParserContext parserContext, Element sourceElement) {
 
-		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAutoProxyCreatorIfNecessary(
-				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
-		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
-		registerComponentIfNecessary(beanDefinition, parserContext);
-	}
+        BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAutoProxyCreatorIfNecessary(
+                parserContext.getRegistry(), parserContext.extractSource(sourceElement));
+        useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
+        registerComponentIfNecessary(beanDefinition, parserContext);
+    }
 
-	public static void registerAspectJAnnotationAutoProxyCreatorIfNecessary(
-			ParserContext parserContext, Element sourceElement) {
+    public static void registerAspectJAnnotationAutoProxyCreatorIfNecessary(
+            ParserContext parserContext, Element sourceElement) {
 
-		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(
-				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
-		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
-		registerComponentIfNecessary(beanDefinition, parserContext);
-	}
+        BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(
+                parserContext.getRegistry(), parserContext.extractSource(sourceElement));
+        useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
+        registerComponentIfNecessary(beanDefinition, parserContext);
+    }
 
-	private static void useClassProxyingIfNecessary(BeanDefinitionRegistry registry, Element sourceElement) {
-		if (sourceElement != null) {
-			boolean proxyTargetClass = Boolean.valueOf(sourceElement.getAttribute(PROXY_TARGET_CLASS_ATTRIBUTE));
-			if (proxyTargetClass) {
-				AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
-			}
-			boolean exposeProxy = Boolean.valueOf(sourceElement.getAttribute(EXPOSE_PROXY_ATTRIBUTE));
-			if (exposeProxy) {
-				AopConfigUtils.forceAutoProxyCreatorToExposeProxy(registry);
-			}
-		}
-	}
+    private static void useClassProxyingIfNecessary(BeanDefinitionRegistry registry, Element sourceElement) {
+        if (sourceElement != null) {
+            boolean proxyTargetClass = Boolean.valueOf(sourceElement.getAttribute(PROXY_TARGET_CLASS_ATTRIBUTE));
+            if (proxyTargetClass) {
+                AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
+            }
+            boolean exposeProxy = Boolean.valueOf(sourceElement.getAttribute(EXPOSE_PROXY_ATTRIBUTE));
+            if (exposeProxy) {
+                AopConfigUtils.forceAutoProxyCreatorToExposeProxy(registry);
+            }
+        }
+    }
 
-	private static void registerComponentIfNecessary(BeanDefinition beanDefinition, ParserContext parserContext) {
-		if (beanDefinition != null) {
-			BeanComponentDefinition componentDefinition =
-					new BeanComponentDefinition(beanDefinition, AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME);
-			parserContext.registerComponent(componentDefinition);
-		}
-	}
+    private static void registerComponentIfNecessary(BeanDefinition beanDefinition, ParserContext parserContext) {
+        if (beanDefinition != null) {
+            BeanComponentDefinition componentDefinition =
+                    new BeanComponentDefinition(beanDefinition, AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME);
+            parserContext.registerComponent(componentDefinition);
+        }
+    }
 
 }
