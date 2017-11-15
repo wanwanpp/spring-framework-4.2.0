@@ -23,6 +23,7 @@ package org.springframework.aop;
  *
  * @author Rod Johnson
  */
+//PointcutAdvisor的拦截级别为方法级
 public interface PointcutAdvisor extends Advisor {
 
 	/**

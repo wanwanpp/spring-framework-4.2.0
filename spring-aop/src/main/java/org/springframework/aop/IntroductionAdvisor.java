@@ -29,6 +29,7 @@ package org.springframework.aop;
  * @since 04.04.2003
  * @see IntroductionInterceptor
  */
+//IntroductionAdvisor的级别为类级别，只有classFilter，没有MethodMatcher
 public interface IntroductionAdvisor extends Advisor, IntroductionInfo {
 
 	/**
