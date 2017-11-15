@@ -149,6 +149,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 	 * unless a hook method throws an exception.
 	 */
 	//类似自己写的代理拦截器。
+	//调用代理类的方法都会调用这个函数，是jdk调用的原理。
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		MethodInvocation invocation;
@@ -190,6 +191,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			}
 
 			// Get the interception chain for this method.
+			//获取所有需要拦截的advisor和interceptor，将它们组成一个链来调用。
 			List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 
 			// Check whether we have any advice. If we don't, we can fallback on direct
