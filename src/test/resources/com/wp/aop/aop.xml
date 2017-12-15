@@ -18,6 +18,7 @@
             <aop:pointcut id="addAllMethod" expression="execution(* com.wp.aop.InvokableMethod.*(..))"/>
             <aop:before method="before" pointcut-ref="addAllMethod"/>
             <aop:after method="after" pointcut-ref="addAllMethod"/>
+            <aop:after method="after" pointcut-ref="addAllMethod"/>
         </aop:aspect>
     </aop:config>
 

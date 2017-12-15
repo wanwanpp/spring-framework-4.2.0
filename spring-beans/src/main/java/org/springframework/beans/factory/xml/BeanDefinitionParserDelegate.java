@@ -423,7 +423,7 @@ public class BeanDefinitionParserDelegate {
         if (containingBean == null) {
             checkNameUniqueness(beanName, aliases, ele);
         }
-//解析xml将信息填充到BeanDefinition中。
+        //解析xml将信息填充到BeanDefinition中，这里是一个GenericBeanDefinition。
         AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
         if (beanDefinition != null) {
             if (!StringUtils.hasText(beanName)) {             //没有beanName就生成一个
@@ -453,6 +453,7 @@ public class BeanDefinitionParserDelegate {
                 }
             }
             String[] aliasesArray = StringUtils.toStringArray(aliases);
+            //将BeanDefinition包装成BeanDefinitionHolder
             return new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray);
         }
 
@@ -510,7 +511,7 @@ public class BeanDefinitionParserDelegate {
             parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
 
             parseConstructorArgElements(ele, bd);                //解析构造函数
-            parsePropertyElements(ele, bd);                          //解析property元素
+            parsePropertyElements(ele, bd);                          //解析property元素,property标签是为bean的成员变量赋值
             parseQualifierElements(ele, bd);
 
             bd.setResource(this.readerContext.getResource());
