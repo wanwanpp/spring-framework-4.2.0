@@ -124,7 +124,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
     private final XmlValidationModeDetector validationModeDetector = new XmlValidationModeDetector();
 
-    //当前已经加载了的xml bean definition resources.
+    //当前正在加载的xml bean definition resources.
     private final ThreadLocal<Set<EncodedResource>> resourcesCurrentlyBeingLoaded =
             new NamedThreadLocal<Set<EncodedResource>>("XML bean definition resources currently being loaded");
 

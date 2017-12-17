@@ -3,6 +3,8 @@ package com.wp.ioc;
 import org.junit.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 public class TestFoo {
@@ -23,7 +25,14 @@ public class TestFoo {
 //        String[] beanDefinitionNames = factory.getBeanDefinitionNames();
 //        Arrays.stream(beanDefinitionNames).forEach(System.out::println);
 //
-        Foo bean = (Foo) factory.getBean("wanwanpp");
+        Foo bean = (Foo) factory.getBean("foo");
         bean.execute();
+    }
+
+    @Test
+    public void testApplicationContext() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("com\\wp\\ioc\\testbean.xml");
+        Foo foo = (Foo) applicationContext.getBean("wanwanpp");
+        foo.execute();
     }
 }

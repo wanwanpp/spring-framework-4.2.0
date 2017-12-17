@@ -162,11 +162,11 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
         if (delegate.isDefaultNamespace(root)) {
             NodeList nl = root.getChildNodes();
             for (int i = 0; i < nl.getLength(); i++) {
-                Node node = nl.item(i);//node是xml配置中每一行的内容
+                Node node = nl.item(i);//node是xml配置中每一行的内容，包括空行
                 if (node instanceof Element) {
                     Element ele = (Element) node;
                     if (delegate.isDefaultNamespace(ele)) {
-                        parseDefaultElement(ele, delegate);//解析<beans/>标签下的子标签，<import>,<bean>,<alias>,<beans>
+                        parseDefaultElement(ele, delegate);//解析<beans/>标签下的子标签，如<import>,<bean>,<alias>,<beans>
                     } else {
                         //自定义标签，如：<aop:config>等
                         delegate.parseCustomElement(ele);
