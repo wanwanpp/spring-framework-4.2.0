@@ -242,7 +242,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
     public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
         Assert.notNull(beanName, "'beanName' must not be null");
         synchronized (this.singletonObjects) {
-            Object singletonObject = this.singletonObjects.get(beanName);
+            Object singletonObject = this.singletonObjects.get(beanName);  //单例bean缓存池中获取
             if (singletonObject == null) {
                 if (this.singletonsCurrentlyInDestruction) {
                     throw new BeanCreationNotAllowedException(beanName,
@@ -449,6 +449,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
      */
     public void registerDependentBean(String beanName, String dependentBeanName) {
         // A quick check for an existing entry upfront, avoiding synchronization...
+        //快速检查
         String canonicalName = canonicalName(beanName);
         Set<String> dependentBeans = this.dependentBeanMap.get(canonicalName);
         if (dependentBeans != null && dependentBeans.contains(dependentBeanName)) {

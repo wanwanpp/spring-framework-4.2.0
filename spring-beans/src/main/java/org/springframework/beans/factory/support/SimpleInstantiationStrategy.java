@@ -76,7 +76,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 								}
 							});
 						}
-						else {
+						else {//反射获取无参的构造函数
 							constructorToUse =	clazz.getDeclaredConstructor((Class[]) null);
 						}
 						bd.resolvedConstructorOrFactoryMethod = constructorToUse;
@@ -86,6 +86,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
+			//ctor.newInstance(args);反射生成实例bean
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {

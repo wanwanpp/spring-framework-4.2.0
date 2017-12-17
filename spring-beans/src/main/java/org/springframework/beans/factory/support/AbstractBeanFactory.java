@@ -240,7 +240,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 } else {
                     logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
                 }
-            }
+            }                    //处理是否是FactoryBean的情况。
             bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
         } else {
             // Fail if we're already creating this bean instance:
@@ -269,14 +269,16 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
             }
 
             try {
-                //得到完整的BeanDefinition，即bean可能是某个类的子类，即它继承了某个类，则将它和它父类的BeanDefinition进行合并
+                //得到完整的BeanDefinition，即bean可能是某个类的子类，它继承了某个类，则将它和它父类的BeanDefinition进行合并
+                //不同于class文件，jvm不会合并父类的class，那样太复杂了，而是使用引用以及动态分派。
+
                 //若没有父类，则深复制到一个RootBeanDefinition。
                 //如果指定了parent属性，但是对应的parent的BeanDefinition不存在，会报异常NoSuchBeanDefinitionException。
                 //没有指定scope属性的，默认为singleton。
                 final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
                 checkMergedBeanDefinition(mbd, beanName, args);            //就是简单的判断mbd是否为abstract。
 
-                // Guarantee initialization of beans that the current bean depends on.
+                // Guarantee initialization of beans that the current bean depends on. depend-on属性
                 String[] dependsOn = mbd.getDependsOn();
                 if (dependsOn != null) {
                     for (String dependsOnBean : dependsOn) {
@@ -289,7 +291,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                     }
                 }
 
-                // Create bean instance.
+                // 创建bean的关键方法
                 if (mbd.isSingleton()) {
                     sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
                         @Override
@@ -1074,6 +1076,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
      *
      * @param bw the BeanWrapper to initialize
      */
+//    初始化属性编辑器
     protected void initBeanWrapper(BeanWrapper bw) {
         bw.setConversionService(getConversionService());
         registerCustomEditors(bw);

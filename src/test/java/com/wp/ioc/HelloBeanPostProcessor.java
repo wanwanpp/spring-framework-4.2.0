@@ -8,7 +8,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 /**
  * Created by 王萍 on 2017/11/7 0007.
  */
-public class HelloBeanPostProcessor implements BeanFactoryPostProcessor,BeanPostProcessor {
+public class HelloBeanPostProcessor implements BeanFactoryPostProcessor, BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -24,8 +24,6 @@ public class HelloBeanPostProcessor implements BeanFactoryPostProcessor,BeanPost
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        System.out.println(
-                "beanFactoryPostprocessor"
-        );
+        System.out.println("beanFactoryPostprocessor");
     }
 }

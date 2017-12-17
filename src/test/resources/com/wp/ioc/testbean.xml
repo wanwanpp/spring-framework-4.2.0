@@ -14,5 +14,5 @@
     <!--<property name="name" value="wangping"/>-->
     <!--</bean>-->
 
-    <!--<bean id="MyInstantiationAwareBeanPostProcessor" class="com.wp.ioc.MyInstantiationAwareBeanPostProcessor"/>-->
+    <bean id="myInstantiationAwareBeanPostProcessor" class="com.wp.ioc.MyInstantiationAwareBeanPostProcessor"/>
 </beans>

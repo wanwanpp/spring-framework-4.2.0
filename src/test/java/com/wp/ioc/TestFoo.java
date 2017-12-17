@@ -22,9 +22,14 @@ public class TestFoo {
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
         reader.loadBeanDefinitions(resource);
 
+//        打印当前ioc中所有的BeanDefinition
 //        String[] beanDefinitionNames = factory.getBeanDefinitionNames();
 //        Arrays.stream(beanDefinitionNames).forEach(System.out::println);
-//
+
+//        ApplicationContext可以自动识别BeanPostProcessor,BeanFactory需要手动添加
+//        factory.addBeanPostProcessor((BeanPostProcessor) factory.getBean("myInstantiationAwareBeanPostProcessor"));
+//        factory.addBeanPostProcessor((BeanPostProcessor) factory.getBean("helloBeanPostProcessor"));
+
         Foo bean = (Foo) factory.getBean("foo");
         bean.execute();
     }
