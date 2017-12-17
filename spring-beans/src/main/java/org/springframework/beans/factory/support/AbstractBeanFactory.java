@@ -352,7 +352,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         }
 
         // Check if required type matches the type of the actual bean instance.
-        //检测bean的实例是否和需要的类型匹配
+        //检测bean的实例是否和需要的类型匹配，调用getBean方法时指定的beanType
         if (requiredType != null && bean != null && !requiredType.isAssignableFrom(bean.getClass())) {
             try {
                 return getTypeConverter().convertIfNecessary(bean, requiredType);
@@ -1528,10 +1528,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         // Now we have the bean instance, which may be a normal bean or a FactoryBean.
         // If it's a FactoryBean, we use it to create a bean instance, unless the
         // caller actually wants a reference to the factory.
+        //如果不是FactoryBean或者name以“&”开始，则返回beanInstance
         if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
             return beanInstance;
         }
 
+        //通过FactoryBean获取bean实例
         Object object = null;
         if (mbd == null) {
             object = getCachedObjectForFactoryBean(beanName);

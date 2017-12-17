@@ -3,16 +3,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!--<bean id="helloBeanPostProcessor" class="com.wp.ioc.HelloBeanPostProcessor"/>-->
+    <bean id="helloBeanPostProcessor" class="com.wp.ioc.HelloBeanPostProcessor"/>
 
     <!--java类之间存在继承关系的才能使用parent属性-->
     <!--BeanFactory不会进行预实例化，ApplicationContext才会在DefaultListableBeanFactory的preInstantiateSingletons中根据lazy-init进行预实例化-->
-    <!--<bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo" parent="parentOfFoo" lazy-init="true"/>-->
-    <bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo"/>
+    <bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo" parent="parentOfFoo" lazy-init="true"/>
+    <!--<bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo"/>-->
 
-    <!--<bean id="parentOfFoo" class="com.wp.ioc.ParentOfFoo">-->
-    <!--<property name="name" value="wangping"/>-->
-    <!--</bean>-->
+    <bean id="parentOfFoo" class="com.wp.ioc.ParentOfFoo">
+        <property name="name" value="wangping"/>
+    </bean>
 
     <bean id="myInstantiationAwareBeanPostProcessor" class="com.wp.ioc.MyInstantiationAwareBeanPostProcessor"/>
 </beans>

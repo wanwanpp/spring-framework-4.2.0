@@ -21,7 +21,8 @@ public class MyInstantiationAwareBeanPostProcessor extends InstantiationAwareBea
     public Object postProcessBeforeInstantiation(Class beanClass,
                                                  String beanName) throws BeansException {
         System.out.println("InstantiationAwareBeanPostProcessor调用postProcessBeforeInstantiation方法");
-        return "haha";
+//        return "haha";
+        return null;
     }
 
     // 接口方法、实例化Bean之后调用

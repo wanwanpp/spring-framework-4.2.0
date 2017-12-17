@@ -479,7 +479,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if (mbd.isSingleton()) {
             instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
         }
-        if (instanceWrapper == null) {//先是创建了bean实例，然后包装成了BeanWrapperImpl
+        if (instanceWrapper == null) {
+            //先是创建了bean实例，然后包装成了BeanWrapperImpl
             instanceWrapper = createBeanInstance(beanName, mbd, args);
         }
         final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
@@ -929,7 +930,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 Class<?> targetType = determineTargetType(beanName, mbd);
                 if (targetType != null) {
                     bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
-                    if (bean != null) {  //注意bean是上一行方法返回的
+                    if (bean != null) {  //注意bean是上一行方法返回的对象。
                         bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
                     }
                 }
@@ -1145,7 +1146,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // state of the bean before properties are set. This can be used, for example,
         // to support styles of field injection.
         boolean continueWithPropertyPopulation = true;
-
+//执行InstantiationAwareBeanPostProcessorAdapter的postProcessAfterInitialization方法
         if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
             for (BeanPostProcessor bp : getBeanPostProcessors()) {
                 if (bp instanceof InstantiationAwareBeanPostProcessor) {
@@ -1161,7 +1162,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if (!continueWithPropertyPopulation) {
             return;
         }
-
+        //如果定义了byName或者byType装配模式
         if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME ||
                 mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
             MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
@@ -1199,7 +1200,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 checkDependencies(beanName, mbd, filteredPds, pvs);
             }
         }
-
+        //填充属性
         applyPropertyValues(beanName, mbd, bw, pvs);
     }
 
@@ -1442,14 +1443,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         } else {
             original = Arrays.asList(pvs.getPropertyValues());
         }
-//自定义类型转换器。
+//获取自定义的类型转换器。
         TypeConverter converter = getCustomTypeConverter();
         if (converter == null) {
             converter = bw;
         }
         BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this, beanName, mbd, converter);
 
-        // Create a deep copy, resolving any references for values.
+        // Create a deep copy, resolving any references for values.  深复制
         List<PropertyValue> deepCopy = new ArrayList<PropertyValue>(original.size());
         boolean resolveNecessary = false;
         for (PropertyValue pv : original) {        //PropertyValue代表Bean中的一对属性及属性值。
@@ -1479,16 +1480,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     deepCopy.add(pv);
                 } else {
                     resolveNecessary = true;
-                    deepCopy.add(new PropertyValue(pv, convertedValue));
+                    deepCopy.add(new PropertyValue(pv, convertedValue));  //将解析后的属性值重新和属性名包装到PropertyValue中
                 }
             }
         }
         if (mpvs != null && !resolveNecessary) {
-            mpvs.setConverted();
+            mpvs.setConverted();  //已经完成解析
         }
 
         // Set our (possibly massaged) deep copy.
         try {
+            //deepCopy中的values都是解析过的
+            //这一步将解析后的value注入给属性
             bw.setPropertyValues(new MutablePropertyValues(deepCopy));
         } catch (BeansException ex) {
             throw new BeanCreationException(
@@ -1537,7 +1540,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     return null;
                 }
             }, getAccessControlContext());
-        } else {
+        } else {//若实现了BeanNameAware，BeanClassLoaderAware，BeanFactoryAware就执行相应的set方法。
             invokeAwareMethods(beanName, bean);
         }
 
