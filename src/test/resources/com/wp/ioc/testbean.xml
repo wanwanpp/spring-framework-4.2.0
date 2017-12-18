@@ -2,17 +2,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
-    <bean id="helloBeanPostProcessor" class="com.wp.ioc.HelloBeanPostProcessor"/>
+    <!--解析xml时按顺序对bean进行读取-->
 
     <!--java类之间存在继承关系的才能使用parent属性-->
     <!--BeanFactory不会进行预实例化，ApplicationContext才会在DefaultListableBeanFactory的preInstantiateSingletons中根据lazy-init进行预实例化-->
-    <bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo" parent="parentOfFoo" lazy-init="true"/>
-    <!--<bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo"/>-->
+    <!--<bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo" parent="parentOfFoo" lazy-init="true"/>-->
+    <bean id="foo" name="wanwanpp" class="com.wp.ioc.Foo" parent="parentOfFoo">
+        <property name="age" value="20"/>
+    </bean>
 
     <bean id="parentOfFoo" class="com.wp.ioc.ParentOfFoo">
         <property name="name" value="wangping"/>
     </bean>
 
-    <bean id="myInstantiationAwareBeanPostProcessor" class="com.wp.ioc.MyInstantiationAwareBeanPostProcessor"/>
+    <!--下面这两个bean在ApplicationContext中预实例化的时间不一样，比普通bean先实例化，看refresh方法的注释-->
+    <!--<bean id="helloBeanPostProcessor" class="com.wp.ioc.HelloBeanPostProcessor"/>-->
+    <!--<bean id="myInstantiationAwareBeanPostProcessor" class="com.wp.ioc.MyInstantiationAwareBeanPostProcessor"/>-->
 </beans>

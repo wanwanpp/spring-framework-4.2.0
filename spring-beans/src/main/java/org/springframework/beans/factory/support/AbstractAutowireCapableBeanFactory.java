@@ -1491,7 +1491,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // Set our (possibly massaged) deep copy.
         try {
             //deepCopy中的values都是解析过的
-            //这一步将解析后的value注入给属性
+            /**
+             *  这一步将解析后的value注入给属性
+             *  原理还是通过属性的set方法反射调用赋值
+             */
             bw.setPropertyValues(new MutablePropertyValues(deepCopy));
         } catch (BeansException ex) {
             throw new BeanCreationException(
@@ -1547,6 +1550,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object wrappedBean = bean;
         if (mbd == null || !mbd.isSynthetic()) {
             //执行bean初始化的自定义前置逻辑
+            //applyBeanPostProcessorsBeforeInitialization（BeanPostProcessor接口定义的）容易与resolveBeforeInstantiation方法中调用的
+            // applyBeanPostProcessorsBeforeInstantiation方法（InstantiationAwareBeanPostProcessor接口定义的）混淆
             wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
         }
 
