@@ -24,6 +24,6 @@ public class HelloBeanPostProcessor implements BeanFactoryPostProcessor, BeanPos
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        System.out.println("beanFactoryPostprocessor");
+        System.out.println("beanFactoryPostprocessor已经执行。");
     }
 }

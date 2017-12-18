@@ -29,13 +29,14 @@ public class TestFoo {
 //        ApplicationContext可以自动识别BeanPostProcessor,BeanFactory需要手动添加
 //        factory.addBeanPostProcessor((BeanPostProcessor) factory.getBean("myInstantiationAwareBeanPostProcessor"));
 //        factory.addBeanPostProcessor((BeanPostProcessor) factory.getBean("helloBeanPostProcessor"));
-
         Foo bean = (Foo) factory.getBean("foo");
         bean.execute();
     }
 
     @Test
     public void testApplicationContext() {
+        //ClassPathXmlApplicationContext的构造函数测参数configLocation可以有多个。即指定多个配置文件
+//        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("com\\wp\\ioc\\testbean.xml", "com\\wp\\ioc\\testbean.xml");
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("com\\wp\\ioc\\testbean.xml");
         Foo foo = (Foo) applicationContext.getBean("wanwanpp");
         foo.execute();
