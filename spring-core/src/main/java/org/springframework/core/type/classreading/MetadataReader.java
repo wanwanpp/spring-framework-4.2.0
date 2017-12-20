@@ -27,6 +27,10 @@ import org.springframework.core.type.ClassMetadata;
  * @author Juergen Hoeller
  * @since 2.5
  */
+
+/**
+ *
+ */
 public interface MetadataReader {
 
 	/**

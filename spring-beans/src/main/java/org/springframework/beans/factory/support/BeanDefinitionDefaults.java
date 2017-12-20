@@ -24,6 +24,10 @@ import org.springframework.util.StringUtils;
  * @author Mark Fisher
  * @since 2.5
  */
+
+/**
+ * 设置一些默认的BeanDefinition属性
+ */
 public class BeanDefinitionDefaults {
 
 	private boolean lazyInit;

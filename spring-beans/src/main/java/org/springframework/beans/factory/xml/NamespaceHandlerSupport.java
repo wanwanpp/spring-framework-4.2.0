@@ -71,6 +71,8 @@ public abstract class NamespaceHandlerSupport implements NamespaceHandler {
 	@Override
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
 		//先获取BeanDefinitionParser，如<aop:config>的config解析器ConfigBeanDefinitionParser。
+		//使用BeanDefinitionParser解析
+		//不同的BeanDefinitionParser包含了不同的对xml的解析策略
 		return findParserForElement(element, parserContext).parse(element, parserContext);
 	}
 

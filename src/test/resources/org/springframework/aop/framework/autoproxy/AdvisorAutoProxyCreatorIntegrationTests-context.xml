@@ -56,7 +56,7 @@
 		<property name="order"><value>10</value></property>
 	</bean>
 
-	<!-- ====== Test for prototype definitions to try to provoke circular references ========================= -->
+	<!-- ===TestMainTest for prototype definitions to try to provoke circular references ========================= -->
 	<!--
 		This advisor should never match and should not change how any of the tests run,
 		but it's a prototype referencing another (unused) prototype, as well as a

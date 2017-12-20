@@ -10,6 +10,7 @@ import java.util.List;
  * @date 2017/12/20 0020
  */
 @Repository
+//@Lazy
 public class AnimalDao {
 
     public static List<Animal> animals = new ArrayList<>();

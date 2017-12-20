@@ -264,9 +264,10 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 */
 	public Set<BeanDefinition> findCandidateComponents(String basePackage) {
 		Set<BeanDefinition> candidates = new LinkedHashSet<BeanDefinition>();
-		try {
+		try {//classpath*:com/wp/annotation/**/*.class
 			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
 					resolveBasePackage(basePackage) + "/" + this.resourcePattern;
+			//获取匹配路径下的Resource
 			Resource[] resources = this.resourcePatternResolver.getResources(packageSearchPath);
 			boolean traceEnabled = logger.isTraceEnabled();
 			boolean debugEnabled = logger.isDebugEnabled();
@@ -275,10 +276,10 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 					logger.trace("Scanning " + resource);
 				}
 				if (resource.isReadable()) {
-					try {
+					try {//MetadataReader，读取class的一些元信息
 						MetadataReader metadataReader = this.metadataReaderFactory.getMetadataReader(resource);
 						if (isCandidateComponent(metadataReader)) {
-							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
+							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);  //只是简单的设置了bean的className
 							sbd.setResource(resource);
 							sbd.setSource(resource);
 							if (isCandidateComponent(sbd)) {
@@ -336,6 +337,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @param metadataReader the ASM ClassReader for the class
 	 * @return whether the class qualifies as a candidate component
 	 */
+	//确保给定的class在include filter中，不在exclude filter中
 	protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
 		for (TypeFilter tf : this.excludeFilters) {
 			if (tf.match(metadataReader, this.metadataReaderFactory)) {

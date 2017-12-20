@@ -168,7 +168,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
                     if (delegate.isDefaultNamespace(ele)) {
                         parseDefaultElement(ele, delegate);//解析<beans/>标签下的子标签，如<import>,<bean>,<alias>,<beans>
                     } else {
-                        //自定义标签，如：<aop:config>等
+                        //自定义标签，如：<aop:config>,<context:component-scan>等
                         delegate.parseCustomElement(ele);
                     }
                 }
