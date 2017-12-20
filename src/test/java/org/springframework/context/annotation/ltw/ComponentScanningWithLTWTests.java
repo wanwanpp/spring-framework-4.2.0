@@ -17,7 +17,7 @@
 package org.springframework.context.annotation.ltw;
 
 /**
- * Test to ensure that component scanning work with load-time weaver.
+ * TestMain to ensure that component scanning work with load-time weaver.
  * See SPR-3873 for more details.
  *
  * @author Ramnivas Laddad

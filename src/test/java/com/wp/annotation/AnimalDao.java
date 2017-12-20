@@ -30,4 +30,8 @@ public class AnimalDao {
         animals.add(animal);
         return true;
     }
+
+    public int count() {
+        return animals.size();
+    }
 }
