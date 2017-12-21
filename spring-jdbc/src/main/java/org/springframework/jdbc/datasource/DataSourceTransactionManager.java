@@ -16,10 +16,6 @@
 
 package org.springframework.jdbc.datasource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.TransactionDefinition;
@@ -28,6 +24,10 @@ import org.springframework.transaction.support.AbstractPlatformTransactionManage
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.ResourceTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * {@link org.springframework.transaction.PlatformTransactionManager}
@@ -99,6 +99,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * @see org.springframework.jdbc.core.JdbcTemplate
  */
 @SuppressWarnings("serial")
+/**
+ * jdbc事务管理器
+ */
 public class DataSourceTransactionManager extends AbstractPlatformTransactionManager
 		implements ResourceTransactionManager, InitializingBean {
 

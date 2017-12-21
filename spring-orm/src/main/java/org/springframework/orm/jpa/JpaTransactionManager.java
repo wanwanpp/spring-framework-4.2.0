@@ -16,16 +16,6 @@
 
 package org.springframework.orm.jpa;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
-import javax.sql.DataSource;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -37,19 +27,15 @@ import org.springframework.jdbc.datasource.ConnectionHandle;
 import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.jdbc.datasource.JdbcTransactionObjectSupport;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
-import org.springframework.transaction.CannotCreateTransactionException;
-import org.springframework.transaction.IllegalTransactionStateException;
-import org.springframework.transaction.NestedTransactionNotSupportedException;
-import org.springframework.transaction.SavepointManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.TransactionSystemException;
-import org.springframework.transaction.support.AbstractPlatformTransactionManager;
-import org.springframework.transaction.support.DefaultTransactionStatus;
-import org.springframework.transaction.support.DelegatingTransactionDefinition;
-import org.springframework.transaction.support.ResourceTransactionManager;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.*;
+import org.springframework.transaction.support.*;
 import org.springframework.util.CollectionUtils;
+
+import javax.persistence.*;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * {@link org.springframework.transaction.PlatformTransactionManager} implementation
@@ -108,6 +94,9 @@ import org.springframework.util.CollectionUtils;
  * @see org.springframework.transaction.jta.JtaTransactionManager
  */
 @SuppressWarnings("serial")
+/**
+ * Java Persist Api（JPA）事务管理器
+ */
 public class JpaTransactionManager extends AbstractPlatformTransactionManager
 		implements ResourceTransactionManager, BeanFactoryAware, InitializingBean {
 

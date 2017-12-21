@@ -16,20 +16,9 @@
 
 package org.springframework.orm.hibernate3;
 
-import java.sql.Connection;
-import javax.sql.DataSource;
-
-import org.hibernate.ConnectionReleaseMode;
-import org.hibernate.FlushMode;
-import org.hibernate.HibernateException;
-import org.hibernate.Interceptor;
-import org.hibernate.JDBCException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.exception.GenericJDBCException;
 import org.hibernate.impl.SessionImpl;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -42,15 +31,14 @@ import org.springframework.jdbc.datasource.JdbcTransactionObjectSupport;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
-import org.springframework.transaction.CannotCreateTransactionException;
-import org.springframework.transaction.IllegalTransactionStateException;
-import org.springframework.transaction.InvalidIsolationLevelException;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.*;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.ResourceTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
 
 /**
  * {@link org.springframework.transaction.PlatformTransactionManager}
@@ -130,6 +118,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * @see org.springframework.transaction.jta.JtaTransactionManager
  */
 @SuppressWarnings("serial")
+/**
+ * hibernate5事务管理器，还有hibernate3，hibernate4都有各自的事务管理器
+ */
 public class HibernateTransactionManager extends AbstractPlatformTransactionManager
 		implements ResourceTransactionManager, BeanFactoryAware, InitializingBean {
 
