@@ -205,6 +205,7 @@ public interface TransactionDefinition {
 	 * @see #PROPAGATION_REQUIRED
 	 * @see org.springframework.transaction.support.TransactionSynchronizationManager#isActualTransactionActive()
 	 */
+	//传播行为
 	int getPropagationBehavior();
 
 	/**
@@ -217,6 +218,7 @@ public interface TransactionDefinition {
 	 * will throw an exception when given any other level than {@link #ISOLATION_DEFAULT}.
 	 * @return the isolation level
 	 */
+	//隔离级别
 	int getIsolationLevel();
 
 	/**
@@ -228,6 +230,7 @@ public interface TransactionDefinition {
 	 * an exception when given any other timeout than {@link #TIMEOUT_DEFAULT}.
 	 * @return the transaction timeout
 	 */
+	//获取事务超时时间
 	int getTimeout();
 
 	/**
@@ -247,6 +250,7 @@ public interface TransactionDefinition {
 	 * @see org.springframework.transaction.support.TransactionSynchronization#beforeCommit(boolean)
 	 * @see org.springframework.transaction.support.TransactionSynchronizationManager#isCurrentTransactionReadOnly()
 	 */
+	// 事务是否只读，事务管理器能够根据这个返回值进行优化，确保事务是只读的
 	boolean isReadOnly();
 
 	/**
