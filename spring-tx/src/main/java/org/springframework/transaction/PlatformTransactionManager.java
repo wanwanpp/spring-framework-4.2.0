@@ -41,6 +41,10 @@ package org.springframework.transaction;
  * @see org.springframework.transaction.interceptor.TransactionInterceptor
  * @see org.springframework.transaction.interceptor.TransactionProxyFactoryBean
  */
+/**
+ * 事务管理器接口
+ * 实现类有jdbc，hibernate，jpa，jda等实现的事务管理器
+ */
 public interface PlatformTransactionManager {
 
 	/**

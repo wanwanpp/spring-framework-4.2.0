@@ -41,6 +41,14 @@ import java.sql.Connection;
  * @see org.springframework.transaction.support.DefaultTransactionDefinition
  * @see org.springframework.transaction.interceptor.TransactionAttribute
  */
+
+/**
+ * 定义spring事务
+ * 1.隔离级别
+ * 2.传播行为
+ * 3.事务超时
+ * 4.只读状态
+ */
 public interface TransactionDefinition {
 
 	/**
@@ -124,10 +132,8 @@ public interface TransactionDefinition {
 	 * feature in EJB.
 	 * <p><b>NOTE:</b> Actual creation of a nested transaction will only work on
 	 * specific transaction managers. Out of the box, this only applies to the JDBC
-	 * {@link org.springframework.jdbc.datasource.DataSourceTransactionManager}
 	 * when working on a JDBC 3.0 driver. Some JTA providers might support
 	 * nested transactions as well.
-	 * @see org.springframework.jdbc.datasource.DataSourceTransactionManager
 	 */
 	int PROPAGATION_NESTED = 6;
 
