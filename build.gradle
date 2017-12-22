@@ -126,6 +126,8 @@ configure(allprojects) { project ->
 	}
 
 	dependencies {
+		// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+		compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.18'
 		testCompile("junit:junit:${junitVersion}") {
 			exclude group:'org.hamcrest', module:'hamcrest-core'
 		}

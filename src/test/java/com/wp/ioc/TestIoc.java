@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
-public class TestFoo {
+public class TestIoc {
 
     @Test
     public void testExecute() {
