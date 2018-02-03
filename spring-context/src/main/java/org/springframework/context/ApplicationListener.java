@@ -33,12 +33,14 @@ import java.util.EventListener;
  * @param <E> the specific ApplicationEvent subclass to listen to
  * @see org.springframework.context.event.ApplicationEventMulticaster
  */
+//类似jdk里的Observer
 public interface ApplicationListener<E extends ApplicationEvent> extends EventListener {
 
 	/**
 	 * Handle an application event.
 	 * @param event the event to respond to
 	 */
+	//类似jdk Observer中的update方法。
 	void onApplicationEvent(E event);
 
 }

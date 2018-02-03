@@ -26,6 +26,32 @@ public class IndexCrol {
         return result;
     }
 
+    @RequestMapping("/header")
+    public String getHeaderParams(@RequestHeader(value = "Accept") String[] accepts) {
+        return null;
+    }
+
+    @RequestMapping(value = "/login")
+    public String login() {
+        return "login";
+    }
+
+    /**
+     * @ModelAttribute修饰的方法先于其他方法前调用，该方法用于接收前台JSP页面传入的参数
+     */
+//    @ModelAttribute
+//    public void userModel(String name, String password, ModelAndView mv) {
+//        User user = new User();
+//        user.setName(name);
+//        user.setPassword(password);
+//        mv.addObject("user", user);
+//    }
+//
+//    @RequestMapping(value = "/login", method = RequestMethod.POST)
+//    public ModelAndView login(ModelAndView mv) {
+//        User user = (User) mv.getModel().get("user");
+//        return null;
+//    }
 
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     @ResponseBody

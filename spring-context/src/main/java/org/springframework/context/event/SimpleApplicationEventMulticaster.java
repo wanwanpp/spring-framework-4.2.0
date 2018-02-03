@@ -16,13 +16,13 @@
 
 package org.springframework.context.event;
 
-import java.util.concurrent.Executor;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ErrorHandler;
+
+import java.util.concurrent.Executor;
 
 /**
  * Simple implementation of the {@link ApplicationEventMulticaster} interface.
@@ -153,6 +153,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 		ErrorHandler errorHandler = getErrorHandler();
 		if (errorHandler != null) {
 			try {
+				//调用ApplicationListener接口的onApplicationEvent方法。
 				listener.onApplicationEvent(event);
 			}
 			catch (Throwable err) {

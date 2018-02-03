@@ -25,6 +25,7 @@ import java.util.EventObject;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
+//应用事件，当做消息传递给ApplicationListener
 public abstract class ApplicationEvent extends EventObject {
 
 	/** use serialVersionUID from Spring 1.2 for interoperability */
