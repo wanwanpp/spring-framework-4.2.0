@@ -16,11 +16,11 @@
 
 package org.springframework.beans.factory.support;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * Interface responsible for creating instances corresponding to a root bean definition.
@@ -31,6 +31,11 @@ import org.springframework.beans.factory.BeanFactory;
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @since 1.1
+ */
+
+/**
+ *   实例化bean的策略接口
+ *   使用了策略模式
  */
 public interface InstantiationStrategy {
 

@@ -256,6 +256,8 @@ class PostProcessorRegistrationDelegate {
             Collection<? extends BeanFactoryPostProcessor> postProcessors, ConfigurableListableBeanFactory beanFactory) {
 
         for (BeanFactoryPostProcessor postProcessor : postProcessors) {
+            //BeanFactoryPostProcessor中又调用factory的方法。
+            //使用了命令模式
             postProcessor.postProcessBeanFactory(beanFactory);
         }
     }

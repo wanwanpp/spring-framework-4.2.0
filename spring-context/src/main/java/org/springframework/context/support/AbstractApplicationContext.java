@@ -532,7 +532,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
             try {
                 // Allows post-processing of the bean factory in context subclasses.
-                //空实现
+                //钩子方法
                 postProcessBeanFactory(beanFactory);
 
                 // Invoke factory processors registered as beans in the context.
@@ -554,7 +554,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
                 initApplicationEventMulticaster();
 
                 // Initialize other special beans in specific context subclasses.
-                //模板方法，由子类实现。
+                //钩子方法
                 onRefresh();
 
                 // Check for listener beans and register them.

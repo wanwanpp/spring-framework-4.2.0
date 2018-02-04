@@ -27,6 +27,12 @@ package org.springframework.aop.framework;
  * @author Juergen Hoeller
  * @see DefaultAopProxyFactory
  */
+
+/**
+ * 策略接口
+ * 定义了创建代理类的方法。
+ * 具体实现有jdk代理，cglib代理。
+ */
 public interface AopProxy {
 
 	/**
