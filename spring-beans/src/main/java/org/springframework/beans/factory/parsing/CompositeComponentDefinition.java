@@ -16,10 +16,10 @@
 
 package org.springframework.beans.factory.parsing;
 
+import org.springframework.util.Assert;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import org.springframework.util.Assert;
 
 /**
  * {@link ComponentDefinition} implementation that holds one or more nested
@@ -30,6 +30,7 @@ import org.springframework.util.Assert;
  * @since 2.0.1
  * @see #getNestedComponents()
  */
+//组合模式中的组合对象
 public class CompositeComponentDefinition extends AbstractComponentDefinition {
 
 	private final String name;
