@@ -290,11 +290,13 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
      *
      * @see #getAdvicesAndAdvisorsForBean
      */
+    //在这里完成aop的代理处理
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean != null) {
             Object cacheKey = getCacheKey(bean.getClass(), beanName);
             if (!this.earlyProxyReferences.contains(cacheKey)) {
+                //主要方法
                 return wrapIfNecessary(bean, beanName, cacheKey);
             }
         }
@@ -335,11 +337,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
         //以上是不需要代理的情景判断。
 
         // Create proxy if we have advice.
-        //返回所有匹配的advisors
+        //返回所有匹配的advisor和advice
         Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
         if (specificInterceptors != DO_NOT_PROXY) {
             this.advisedBeans.put(cacheKey, Boolean.TRUE);
-            //正式创建代理
+            //重要方法，正式创建代理
             Object proxy = createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
             this.proxyTypes.put(cacheKey, proxy.getClass());
             return proxy;
@@ -435,7 +437,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.copyFrom(this);
-//若没有设置    <aop:config proxy-target-class="true">中的proxy-target-class，或者设置为了false。
+        //若没有设置    <aop:config proxy-target-class="true">中的proxy-target-class，或者设置为了false。
         if (!proxyFactory.isProxyTargetClass()) {
             if (shouldProxyTargetClass(beanClass, beanName)) {
                 proxyFactory.setProxyTargetClass(true);
@@ -443,7 +445,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
                 evaluateProxyInterfaces(beanClass, proxyFactory);
             }
         }
-//加入common advisors
+        //加入common advisors
         Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
         for (Advisor advisor : advisors) {
             proxyFactory.addAdvisor(advisor);
