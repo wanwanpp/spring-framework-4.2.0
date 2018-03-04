@@ -78,8 +78,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
     // 这三个bean就形成了一个环。为了解决循环依赖的问题，spring采取了一种将创建的bean实例提早暴露加入到缓存中，
     // 一旦下一个bean创建的时候需要依赖上个bean，则直接使用ObjectFactory来获取bean
 
-    //singletonObjects和earlySingletonObjects的区别主要在于earlySingletonObjects是为了解决循环依赖设置的，
-    // 储存的是提前暴露的bean name –> bean instance，而singletonObjects存储的是完全实例化的bean name –> bean instance。
+    //singletonObjects和earlySingletonObjects的区别：
+    // 在于earlySingletonObjects是为了解决循环依赖设置的，储存的是提前暴露的bean name –> bean instance，
+    // 而singletonObjects存储的是完全实例化的bean name –> bean instance。
     //提前暴露的bean实例是指bean实例创建完成，但是还没有对属性进行注入，即没有注入依赖的对象，因为循环依赖中，依赖的对象还没有，为null，
     // 循环依赖通过这种方法可以解决
 
