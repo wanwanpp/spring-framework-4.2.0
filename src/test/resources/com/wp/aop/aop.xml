@@ -11,13 +11,18 @@
     <bean id="defaultInvokeMethod" class="com.wp.aop.impl.DefaultInvokeMethod"/>
     <bean id="timeMonitorHandler" class="com.wp.aop.TimeMonitorHandler"/>
 
+    <bean id="defaultBeforeAdvice" class="com.wp.aop.DefaultBeforeAdvice"/>
     <!--注解配置-->
     <!--<aop:aspectj-autoproxy proxy-target-class="true"/>-->
     <aop:config proxy-target-class="false">
+        <!--<aop:aspect>与<aop:advisor>的区别-->
+        <!--advice-ref中的bean必须是Advice类型的-->
+        <!--<aop:advisor advice-ref="defaultBeforeAdvice" pointcut-ref="addAllMethod"/>-->
+
         <aop:aspect id="time" ref="timeMonitorHandler">
+            <!--配置切入点-->
             <aop:pointcut id="addAllMethod" expression="execution(* com.wp.aop.InvokableMethod.*(..))"/>
             <aop:before method="before" pointcut-ref="addAllMethod"/>
-            <aop:after method="after" pointcut-ref="addAllMethod"/>
             <aop:after method="after" pointcut-ref="addAllMethod"/>
         </aop:aspect>
     </aop:config>

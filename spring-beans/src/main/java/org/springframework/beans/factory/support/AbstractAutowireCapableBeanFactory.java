@@ -516,7 +516,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object exposedObject = bean;
         try {//填充Bean的属性
             populateBean(beanName, mbd, instanceWrapper);
-            if (exposedObject != null) {   //执行以下初始化方法，如：实现了InitializingBean接口定义的afterProperties方法和init-method指定的方法。
+            if (exposedObject != null) {   //执行以下初始化方法，如：实现了InitializingBean接口定义的afterProperties方法、init-method指定的方法以及BeanPostProcessor的前后置逻辑。
                 exposedObject = initializeBean(beanName, exposedObject, mbd);
             }
         } catch (Throwable ex) {
@@ -1073,7 +1073,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 //若有MethodOverride，则使用cglib实例化。没有则直接用反射利用无参构造实例化。
                 beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
             }
-            //包装成BeanWrapper对象。增加了一下属性类型转换，修改的操作。
+            //包装成BeanWrapper对象。增加了一些属性类型转换，修改的操作。
             BeanWrapper bw = new BeanWrapperImpl(beanInstance);
             initBeanWrapper(bw);
             return bw;
@@ -1550,7 +1550,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         Object wrappedBean = bean;
         if (mbd == null || !mbd.isSynthetic()) {
-            //执行bean初始化的自定义前置逻辑
+            //执行BeanPostProcessor的前置逻辑
             //applyBeanPostProcessorsBeforeInitialization（BeanPostProcessor接口定义的）容易与resolveBeforeInstantiation方法中调用的
             // applyBeanPostProcessorsBeforeInstantiation方法（InstantiationAwareBeanPostProcessor接口定义的）混淆
             wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);

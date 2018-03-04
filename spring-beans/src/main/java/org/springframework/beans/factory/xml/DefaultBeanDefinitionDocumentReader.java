@@ -162,7 +162,10 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
         if (delegate.isDefaultNamespace(root)) {
             NodeList nl = root.getChildNodes();
             for (int i = 0; i < nl.getLength(); i++) {
-                Node node = nl.item(i);//node是xml配置中每一行的内容，包括空行
+                /**
+                 * node是xml配置中每一行的内容，包括空行
+                 */
+                Node node = nl.item(i);
                 if (node instanceof Element) {
                     Element ele = (Element) node;
                     if (delegate.isDefaultNamespace(ele)) {
