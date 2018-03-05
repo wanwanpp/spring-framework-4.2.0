@@ -337,7 +337,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
         //以上是不需要代理的情景判断。
 
         // Create proxy if we have advice.
-        //返回所有匹配的advisor和advice
+        //返回所有匹配的advisor和advice，重要方法。
         Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
         if (specificInterceptors != DO_NOT_PROXY) {
             this.advisedBeans.put(cacheKey, Boolean.TRUE);
@@ -438,10 +438,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.copyFrom(this);
         //若没有设置    <aop:config proxy-target-class="true">中的proxy-target-class，或者设置为了false。
+        //选择cglib代理还是jdk代理
         if (!proxyFactory.isProxyTargetClass()) {
             if (shouldProxyTargetClass(beanClass, beanName)) {
                 proxyFactory.setProxyTargetClass(true);
             } else {
+                //不使用cglib就添加bean的interface到proxyFactory中
                 evaluateProxyInterfaces(beanClass, proxyFactory);
             }
         }
@@ -450,7 +452,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
         for (Advisor advisor : advisors) {
             proxyFactory.addAdvisor(advisor);
         }
-
+        //targetSource中封装了被代理的bean
         proxyFactory.setTargetSource(targetSource);
         customizeProxyFactory(proxyFactory);//空实现，可子类重写。
 
@@ -460,7 +462,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
         }
         //用DefaultAopProxyFactory创建AopProxy，根据条件选择Cglib或者Jdk代理。
         //具体在DefaultAopProxyFactory的createAopProxy方法里。
-
+        //重要方法
         //首先是生成合适的AopProxy对象，然后用AopProxy生产代理类class和对象。
         return proxyFactory.getProxy(getProxyClassLoader());
     }

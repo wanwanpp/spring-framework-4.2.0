@@ -21,13 +21,18 @@
     </servlet-mapping>
 
     <context-param>
-        <param-name>contestConfigLocation</param-name>
+        <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
     <context-param>
         <param-name>contextId</param-name>
         <param-value>wanwanpp的WebApplicationContext</param-value>
     </context-param>
+    <!--指定WebApplicationContext-->
+    <!--<context-param>-->
+        <!--<param-name>contextClass</param-name>-->
+        <!--<param-value>org.springframework.web.context.support.XmlWebApplicationContext</param-value>-->
+    <!--</context-param>-->
     
     <context-param>
         <param-name>globalInitializerClasses</param-name>

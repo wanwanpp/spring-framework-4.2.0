@@ -115,7 +115,9 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating JDK dynamic proxy: target source is " + this.advised.getTargetSource());
 		}
+		//找到所有要代理的接口
 		Class<?>[] proxiedInterfaces = AopProxyUtils.completeProxiedInterfaces(this.advised);
+		//尝试寻找这些接口方法里面有没有equals方法和hashCode方法，同时都有的话打个标记，寻找结束，equals方法和hashCode方法有特殊处理。
 		findDefinedEqualsAndHashCodeMethods(proxiedInterfaces);
 		return Proxy.newProxyInstance(classLoader, proxiedInterfaces, this);
 	}
@@ -161,6 +163,8 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		Object target = null;
 
 		try {
+			//equals和hashcode的特殊处理
+			//即使满足expression规则，也不会为之产生代理内容，调用的是JdkDynamicAopProxy的equals方法与hashCode方法。
 			if (!this.equalsDefined && AopUtils.isEqualsMethod(method)) {
 				// The target does not implement the equals(Object) method itself.
 				return equals(args[0]);
@@ -174,9 +178,9 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 				// Service invocations on ProxyConfig with the proxy config...
 				return AopUtils.invokeJoinpointUsingReflection(this.advised, method, args);
 			}
-
+			//返回值
 			Object retVal;
-
+			//判断是否将代理暴露出去的，由<aop:config>标签中的expose-proxy="true/false"配置。
 			if (this.advised.exposeProxy) {
 				// Make invocation available if necessary.
 				oldProxy = AopContext.setCurrentProxy(proxy);
@@ -200,12 +204,14 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 				// We can skip creating a MethodInvocation: just invoke the target directly
 				// Note that the final invoker must be an InvokerInterceptor so we know it does
 				// nothing but a reflective operation on the target, and no hot swapping or fancy proxying.
+				//无增强则反射直接调用原method
 				retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);
 			}
 			else {
 				// We need to create a method invocation...
 				invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 				// Proceed to the joinpoint through the interceptor chain.
+				//递归调用链
 				retVal = invocation.proceed();
 			}
 

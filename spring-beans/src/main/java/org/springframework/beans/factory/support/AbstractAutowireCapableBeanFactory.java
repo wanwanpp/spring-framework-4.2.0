@@ -1564,9 +1564,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     (mbd != null ? mbd.getResourceDescription() : null),
                     beanName, "Invocation of init method failed", ex);
         }
-
         if (mbd == null || !mbd.isSynthetic()) {
             //执行bean初始化的自定义后置逻辑
+            //aop代理在这里完成。
             wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
         }
         return wrappedBean;

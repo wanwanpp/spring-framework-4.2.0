@@ -41,7 +41,8 @@ public class AspectJAfterAdvice extends AbstractAspectJAdvice implements MethodI
 		try {
 			return mi.proceed();
 		}
-		finally {  //执行after advice指定的方法。
+		finally {
+//			在调用链后执行after advice指定的方法。
 			invokeAdviceMethod(getJoinPointMatch(), null, null);
 		}
 	}

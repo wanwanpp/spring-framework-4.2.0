@@ -567,7 +567,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
                 finishBeanFactoryInitialization(beanFactory);
 
                 // Last step: publish corresponding event.
-                finishRefresh();       //里面有springmvc九大组件的初始化，是在发送ApplicationContextRefresh事件后执行的。
+                finishRefresh();       //发送ApplicationContextRefresh事件后，会将时间传递到FrameworkServlet的onApplicationEvent中，然后进行springmvc九大组件的初始化。
             } catch (BeansException ex) {
                 logger.warn("Exception encountered during context initialization - cancelling refresh attempt", ex);
 

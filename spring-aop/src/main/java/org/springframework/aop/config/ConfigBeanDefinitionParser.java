@@ -89,6 +89,8 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
                 new CompositeComponentDefinition(element.getTagName(), parserContext.extractSource(element));
         parserContext.pushContainingComponent(compositeDef);
 
+        //注册了一个AspectJAwareAdvisorAutoProxyCreator
+        //根据配置proxy-target-class和expose-proxy，设置是否使用CGLIB进行代理以及是否暴露最终的代理。
         configureAutoProxyCreator(parserContext, element);
 
         List<Element> childElts = DomUtils.getChildElements(element);
@@ -198,7 +200,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
             //处理<aop:aspect>下的标签。
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                //判断node是不是advice类型的元素，如：aop:before,aop:after,aop:after-returning,aop:around,aop:after-throwing等
+                //判断node是不是advice类型的元素，如：aop:before,aop:after,aop:after-returning,aop:around,aop:after-throwing
                 if (isAdviceNode(node, parserContext)) {
                     if (!adviceFoundAlready) {
                         adviceFoundAlready = true;
@@ -313,7 +315,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
             aspectFactoryDef.getPropertyValues().add("aspectBeanName", aspectName);
             aspectFactoryDef.setSynthetic(true);
 
-            // register the pointcut      得到advice的BeanDefinition。    直接new RootBeanDefinition(BeanDefinition beanDefinition）
+            // register the pointcut      得到advice的BeanDefinition。    直接new RootBeanDefinition(Class class）
             AbstractBeanDefinition adviceDef = createAdviceDefinition(
                     adviceElement, parserContext, aspectName, order, methodDefinition, aspectFactoryDef,
                     beanDefinitions, beanReferences);
