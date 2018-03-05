@@ -16,16 +16,16 @@
 
 package org.springframework.web.servlet.view;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.Ordered;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.servlet.View;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Simple implementation of the {@link org.springframework.web.servlet.ViewResolver}
@@ -431,18 +431,19 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 		if (!canHandle(viewName, locale)) {
 			return null;
 		}
-		// Check for special "redirect:" prefix.
+		// Check for special "redirect:" prefix.  重定向前缀
 		if (viewName.startsWith(REDIRECT_URL_PREFIX)) {
 			String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());
 			RedirectView view = new RedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
 			return applyLifecycleMethods(viewName, view);
 		}
-		// Check for special "forward:" prefix.
+		// Check for special "forward:" prefix.  请求转发前缀
 		if (viewName.startsWith(FORWARD_URL_PREFIX)) {
 			String forwardUrl = viewName.substring(FORWARD_URL_PREFIX.length());
 			return new InternalResourceView(forwardUrl);
 		}
 		// Else fall back to superclass implementation: calling loadView.
+		// 创建View对象
 		return super.createView(viewName, locale);
 	}
 

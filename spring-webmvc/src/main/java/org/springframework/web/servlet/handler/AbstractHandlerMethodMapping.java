@@ -303,6 +303,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	/**
 	 * Look up a handler method for the given request.
 	 */
+	//根据请求路径找到处理请求的方法
 	@Override
 	protected HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception {
 		//获取请求路径。
@@ -312,7 +313,8 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		}
 		this.mappingRegistry.acquireReadLock();        //上锁
 		try {
-			HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request);               //实际处理请求的方法。
+			//根据请求路径找到处理请求的方法
+			HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request);
 			if (logger.isDebugEnabled()) {
 				if (handlerMethod != null) {
 					logger.debug("Returning handler method [" + handlerMethod + "]");
