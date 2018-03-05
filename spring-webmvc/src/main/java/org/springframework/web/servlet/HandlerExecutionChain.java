@@ -38,7 +38,7 @@ import java.util.List;
 public class HandlerExecutionChain {
 
 	private static final Log logger = LogFactory.getLog(HandlerExecutionChain.class);
-
+	//HandlerMethod
 	private final Object handler;
 
 	private HandlerInterceptor[] interceptors;

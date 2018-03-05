@@ -126,7 +126,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	//从request中解析要执行的HandlerMethod中的参数。然后反射执行方法。
 	public Object invokeForRequest(NativeWebRequest request, ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
-
+		//解析方法的参数
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			StringBuilder sb = new StringBuilder("Invoking [");
@@ -135,6 +135,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			sb.append(Arrays.asList(args));
 			logger.trace(sb.toString());
 		}
+		//重要方法，反射执行Controller中的用户方法
 		Object returnValue = doInvoke(args);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Method [" + getMethod().getName() + "] returned [" + returnValue + "]");
@@ -218,9 +219,9 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 */
 	//真正执行Handler方法的地方。
 	protected Object doInvoke(Object... args) throws Exception {
-		ReflectionUtils.makeAccessible(getBridgedMethod());
+		ReflectionUtils.makeAccessible(getBridgedMethod());        //设置Method可访问
 		try {
-			return getBridgedMethod().invoke(getBean(), args);
+			return getBridgedMethod().invoke(getBean(), args);        //getBean获取到的是方法所在的对象，即Controller对象
 		}
 		catch (IllegalArgumentException ex) {
 			assertTargetBean(getBridgedMethod(), getBean(), args);

@@ -125,7 +125,7 @@ public abstract class HttpServletBean extends HttpServlet
             ResourceLoader resourceLoader = new ServletContextResourceLoader(getServletContext());
             //注册自定义属性编辑器,一旦遇到resource类型的属性将会使用ResourceEditor进行解析
             bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, getEnvironment()));
-            //留给子类实现。
+            //钩子方法。
             initBeanWrapper(bw);
             bw.setPropertyValues(pvs, true);
         } catch (BeansException ex) {
@@ -134,7 +134,7 @@ public abstract class HttpServletBean extends HttpServlet
         }
 
         // Let subclasses do whatever initialization they like.
-        // 子类实现，FrameworkServlet中实现了这个方法，用于为当前servlet创建了XmlWebApplicationContext，并将其设置到servletContext中。
+        // 子类实现，FrameworkServlet中实现了这个方法，为FrameworkServlet创建XmlWebApplicationContext，并配置，再启动。并将其设置到servletContext中。
         initServletBean();
 
         if (logger.isDebugEnabled()) {

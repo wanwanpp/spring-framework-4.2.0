@@ -675,7 +675,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	@Override
 	protected ModelAndView handleInternal(HttpServletRequest request,
 			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
-// 对request做一些检查。
+		// 对request做一些检查。
 		checkRequest(request);
 
 		if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
@@ -695,7 +695,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 				}
 			}
 		}
-
+		//重要方法，处理完用户Controller中的代码并返回了ModelAndView
 		return invokeHandlerMethod(request, response, handlerMethod);
 	}
 
@@ -742,7 +742,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 		WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 		ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
-//将HandlerMethod包装成ServletInvocableHandlerMethod类类真正执行方法。
+		//将HandlerMethod包装成ServletInvocableHandlerMethod类类真正执行方法。
 		ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 		invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 		invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
@@ -772,12 +772,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			}
 			invocableMethod = invocableMethod.wrapConcurrentResult(result);
 		}
-
+		//重要方法
 		invocableMethod.invokeAndHandle(webRequest, mavContainer);
 		if (asyncManager.isConcurrentHandlingStarted()) {
 			return null;
 		}
-
+		//根据ModelAndViewContainer得到ModelAndView对象实例
 		return getModelAndView(mavContainer, modelFactory, webRequest);
 	}
 
@@ -878,6 +878,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			return null;
 		}
 		ModelMap model = mavContainer.getModel();
+		//创建一个ModelAndVIew
 		ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model);
 		if (!mavContainer.isViewReference()) {           //判断mavContainer中的view是否是一个View的引用（即ViewName）
 			mav.setView((View) mavContainer.getView());

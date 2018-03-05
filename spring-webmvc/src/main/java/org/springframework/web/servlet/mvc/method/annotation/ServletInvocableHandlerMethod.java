@@ -107,7 +107,8 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 	 */
 	public void invokeAndHandle(ServletWebRequest webRequest,
 			ModelAndViewContainer mavContainer, Object... providedArgs) throws Exception {
-		//从request中解析要执行的HandlerMethod中的参数。然后反射执行方法。
+		//重要方法
+		//从request中解析要执行的HandlerMethod中的参数。然后反射执行方法得到结果值。
 		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs);
 		//根据@ResponseStatus注解设置response status
 		setResponseStatus(webRequest);
@@ -125,8 +126,8 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 
 		mavContainer.setRequestHandled(false);
 		try {
-			this.returnValueHandlers.handleReturnValue(
-					returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
+
+			this.returnValueHandlers.handleReturnValue(returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
 		}
 		catch (Exception ex) {
 			if (logger.isTraceEnabled()) {
