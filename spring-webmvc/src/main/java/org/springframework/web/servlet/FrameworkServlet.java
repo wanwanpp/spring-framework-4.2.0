@@ -585,7 +585,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
         }
         if (wac == null) {
             // No context instance is defined for this servlet -> create a local one
-            //创建一个XmlWebApplicationContext。
+            //创建一个XmlWebApplicationContext。  重要方法
             wac = createWebApplicationContext(rootContext);
         }
 
@@ -699,8 +699,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
         if (env instanceof ConfigurableWebEnvironment) {
             ((ConfigurableWebEnvironment) env).initPropertySources(getServletContext(), getServletConfig());
         }
-
+        //钩子方法
         postProcessWebApplicationContext(wac);
+        //执行配置的globalInitializerClasses
         applyInitializers(wac);
         wac.refresh();
     }

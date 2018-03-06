@@ -438,8 +438,8 @@ public class ContextLoader {
 		}
 		//将servletContext设置到WebApplicationContext中
 		wac.setServletContext(sc);
-//		设置applicationContext.xml配置的位置。该配置用于配置spring容器
-		String configLocationParam = sc.getInitParameter(CONFIG_LOCATION_PARAM);//获取spring ApplicationContext配置的位置。
+//		设置applicationContext.xml配置的位置。容器启动时使用
+		String configLocationParam = sc.getInitParameter(CONFIG_LOCATION_PARAM);
 		if (configLocationParam != null) {
 			wac.setConfigLocation(configLocationParam);
 		}
